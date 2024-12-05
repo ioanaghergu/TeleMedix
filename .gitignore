@@ -1,3 +1,7 @@
 .vscode
 website/__pycache__
+test/__pycache__
+.pytest_cache
+instance
+
 
