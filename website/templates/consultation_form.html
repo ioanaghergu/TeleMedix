@@ -22,7 +22,9 @@
             <select id="doctor" name="doctor" class="form-control" disabled required>
                 <option value="" disabled selected>Select a doctor</option>
                 {% for doctor in doctors %}
-                    <option value="{{ doctor.id }}" data-specialization="{{ doctor.specializationId }}" style="display: none;">{{ doctor.name }}</option>
+                    {% if doctor.id != user.id %}
+                        <option value="{{ doctor.id }}" data-specialization="{{ doctor.specializationId }}" style="display: none;">{{ doctor.name }}</option>
+                    {% endif %}
                 {% endfor %}
             </select>
         </div>

@@ -22,6 +22,8 @@ class Appointment(db.Model):
     appointment_id = db.Column(db.Integer, primary_key=True)
     patient_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.medicId'))
+    doctor = db.relationship('Doctor', foreign_keys=[doctor_id])
+    patient = db.relationship('User', foreign_keys=[patient_id])
     date = db.Column(db.DateTime)
     notes = db.Column(db.String(500))
     service_id = db.Column(db.Integer, nullable=True)
