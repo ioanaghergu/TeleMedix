@@ -1,0 +1,19 @@
+{% extends "_baseTemplate.html" %}
+
+{% block title %}Account{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h3 class="text-center">My Account</h3>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Name: {{ user.name }}</h5>
+            <p class="card-text">Email: {{ user.email }}</p>
+            
+            <a href="{{ url_for('account.edit_account') }}" class="btn btn-warning">Edit Account</a>
+            <a href="{{ url_for('account.confirm_delete') }}" class="btn btn-danger">Delete Account</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
