@@ -15,9 +15,13 @@ def create_app():
 
     from .views import views
     from .auth import auth
+    from .doctors import doctor
+    from .consultations import consultation
 
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
+    app.register_blueprint(doctor, url_prefix='/')
+    app.register_blueprint(consultation, url_prefix='/')
 
     from .models import User
     
