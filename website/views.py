@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template
 from flask_login import login_required, current_user
+import time
 
 views = Blueprint('views', __name__)
 
@@ -11,7 +12,7 @@ def home():
 @views.route('/account')
 @login_required
 def account():
-    return render_template("account/account.html", user=current_user)
+    return render_template("account/account.html", user=current_user, time=time)
 
 @views.route('/appointments')
 def appointments():
