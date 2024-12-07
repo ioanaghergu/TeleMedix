@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
-from flask_login import current_user
+from flask_login import current_user, login_required
 from .models import Doctor, Specialization, Appointment
 from . import db
 from datetime import datetime
@@ -7,6 +7,7 @@ from datetime import datetime
 consultation = Blueprint('consultation', __name__)
 
 @consultation.route('/consultation-form', methods=['GET', 'POST'])
+@login_required
 def add_consultation():
     if request.method == 'POST':
         patient_id = current_user.id
@@ -42,5 +43,12 @@ def add_consultation():
 
     return render_template("sign_up.html", user=current_user)
 
+
+@consultation.route('/attended-consultations', methods=['GET'])
+@login_required
+def get_consultations():
+    appointments = Appointment.query.filter_by(patient_id=current_user.id).all()
+    print(appointments)
+    return render_template("attended_consultations.html", appointments=appointments, user=current_user)
 
 

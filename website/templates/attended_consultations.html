@@ -1,0 +1,20 @@
+{% extends "_baseTemplate.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Attended Consultations</h2>
+    <div class="list-group">
+        {% for appointment in appointments %}
+            <div class="list-group-item">
+                <h5 class="mb-1"><strong>Date:</strong> {{ appointment.date }}</h5>
+                <p class="mb-1"><strong>Doctor:</strong> {{ appointment.doctor.name }}</p>
+                <p class="mb-1"><strong>Notes:</strong> {{ appointment.notes }}</p>
+            </div>
+        {% else %}
+            <div class="list-group-item">
+                No attended consultations found.
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
