@@ -9,8 +9,9 @@ def home():
     return render_template("home.html", user=current_user)
 
 @views.route('/account')
+@login_required
 def account():
-    return render_template("account.html")
+    return render_template("account/account.html", user=current_user)
 
 @views.route('/appointments')
 def appointments():
