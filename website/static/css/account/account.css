@@ -1,0 +1,133 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f9f9f9; 
+    color: #333;
+}
+
+.container {
+    max-width: 750px; 
+    margin: auto;
+}
+
+.profile-header {
+    background-color: #007bff; 
+    color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.profile-title {
+    font-size: 2rem; 
+    font-weight: bold;
+}
+
+.profile-description {
+    font-size: 1rem;
+    font-style: italic;
+    margin-top: 5px;
+}
+
+.profile-card {
+    background-color: #fff;
+    border-radius: 10px; 
+    border: 1px solid #ddd;
+    padding: 30px; 
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); 
+    margin-top: 15px;
+}
+
+.profile-icon i {
+    font-size: 8rem; 
+    color: #007bff; 
+    margin-bottom: 15px;
+}
+
+.profile-name {
+    font-size: 1.8rem; 
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+/* Profile Email */
+.text-muted {
+    font-size: 1rem; 
+    color: #6c757d;
+    margin-top: 5px;
+}
+
+/* Action Buttons */
+.d-flex.justify-content-between {
+    justify-content: space-between; 
+}
+
+.btn {
+    padding: 12px 20px;
+    font-size: 1rem; 
+    border-radius: 5px; 
+}
+
+/* Edit Button */
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+}
+
+/* Delete Button */
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}
+
+/* Logout Button */
+.btn-outline-secondary {
+    border-color: #6c757d; 
+    color: #6c757d;
+    font-size: 1rem;
+    padding: 12px 20px;
+    margin-top: 20px;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #6c757d;
+    color: #fff; 
+}
+
+@media (max-width: 768px) {
+    .container {
+        max-width: 90%;
+    }
+
+    .profile-header {
+        padding: 15px;
+    }
+
+    .profile-card {
+        padding: 20px; 
+    }
+
+    .profile-icon i {
+        font-size: 6.5rem; 
+    }
+
+    .profile-name {
+        font-size: 1.5rem; 
+    }
+
+    .text-muted {
+        font-size: 0.9rem; 
+    }
+
+    .btn {
+        font-size: 0.9rem; 
+        padding: 10px 15px;
+    }
+}
