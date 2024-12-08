@@ -4,6 +4,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from website.models import User
 from . import db
 from .auth import validateEmail, validatePassword
+import time
 
 account = Blueprint('account', __name__)
 
@@ -20,7 +21,7 @@ def edit_account():
         existing_user = User.query.filter_by(email=email).first()
         if existing_user and existing_user.id != current_user.id:
             flash("This email is already in use.", category='error')
-            return render_template('account/edit_account.html', user=current_user)
+            return render_template('account/edit_account.html', user=current_user, time=time)
         
         if not name or len(name) < 7:
             flash("Name must be at least 7 characters long.", category='error')
@@ -43,12 +44,12 @@ def edit_account():
             except Exception as e:
                 flash(f'An error occurred: {e}', category='error')
 
-    return render_template('account/edit_account.html', user=current_user)
+    return render_template('account/edit_account.html', user=current_user, time=time)
 
 @account.route('/account/confirm-delete', methods=['GET'])
 @login_required
 def confirm_delete():
-    return render_template("account/delete_account.html", user=current_user)
+    return render_template("account/delete_account.html", user=current_user, time=time)
 
 @account.route('/account/delete', methods=['POST'])
 @login_required
