@@ -3,30 +3,34 @@
 {% block title %}Delete Account{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h3 class="text-center">Delete Account</h3>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/account/delete_account.css') }}?v={{ time.time() }}">
 
-    <div class="alert alert-warning">
-        <strong>Warning!</strong> Deleting your account is permanent and cannot be undone. All your data will be lost.
-    </div>
+<div class="delete-account-page container py-5">
+    <div class="card shadow p-4 rounded">
+        <h3 class="text-center mb-4">Delete Account</h3>
 
-    <form method="POST" action="{{ url_for('account.delete_account') }}">
-        <div class="form-group">
-            <label for="password">Enter your password to confirm account deletion:</label>
-            <input 
-                type="password" 
-                class="form-control" 
-                id="password_id" 
-                name="password" 
-                placeholder="Enter password"
-                required
-            />
+        <div class="alert alert-warning text-center">
+            <strong>Warning!</strong> Deleting your account is permanent and cannot be undone. All your data will be lost.
         </div>
 
-        <button type="submit" class="btn btn-danger">Delete Account</button>
-    </form>
+        <form method="POST" action="{{ url_for('account.delete_account') }}">
+            <div class="form-group mb-3">
+                <label for="password" class="form-label">Enter your password to confirm account deletion:</label>
+                <input 
+                    type="password" 
+                    class="form-control" 
+                    id="password" 
+                    name="password" 
+                    placeholder="Enter password"
+                    required
+                />
+            </div>
+            <button type="submit" class="btn btn-danger w-100 py-2">Delete Account</button>
+        </form>
 
-    <br />
-    <a href="{{ url_for('views.account') }}" class="btn btn-secondary">Cancel</a>
+        <div class="text-center mt-3">
+            <a href="{{ url_for('views.account') }}" class="btn btn-secondary w-100 py-2">Cancel</a>
+        </div>
+    </div>
 </div>
 {% endblock %}
