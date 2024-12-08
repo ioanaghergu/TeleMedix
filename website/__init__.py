@@ -19,11 +19,22 @@ def create_app():
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
 
-    from .models import User
+    from .models import User, Role
     
     with app.app_context():
         db.create_all()
+        roles = ['Admin', 'Patient', 'Doctor']
+        for role in roles:
+            if not Role.query.filter_by(name=role).first():
+                new_role = Role(name=role)
+                db.session.add(new_role)
 
+        db.session.commit()
+
+        # all_roles = Role.query.all()
+        # for role in all_roles:
+        #     print(f"ID: {role.id}, Name: {role.name}")    
+       
     loginManager = LoginManager()
     loginManager.login_view = 'auth.login'
     loginManager.init_app(app)
@@ -39,3 +50,7 @@ def create_database(app):
     if not path.exists('website/' + DB_NAME):
         db.create_all(app=app)
         print('Created Database!')
+
+
+
+  
