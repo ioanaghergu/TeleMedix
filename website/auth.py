@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
-from .models import User
+from .models import User, Role
 from werkzeug.security import generate_password_hash, check_password_hash
 import re
 from . import db
@@ -31,8 +31,10 @@ def sign_up():
         name = request.form.get('name')
         email = request.form.get('email')
         password = request.form.get('password')
-        confirmedPassword = request.form.get('confirmedPassword')    
+        confirmedPassword = request.form.get('confirmedPassword')  
+        role_id = request.form.get('role')
 
+        print(role_id)
         user = User.query.filter_by(email = email).first()
 
         if user:
@@ -46,14 +48,16 @@ def sign_up():
         elif password != confirmedPassword:
             flash("Passwords do not match", category="error")
         else:
-            newUser = User(name=name, email=email, password=generate_password_hash(password, method='pbkdf2:sha256'))
+            newUser = User(name=name, email=email, password=generate_password_hash(password, method='pbkdf2:sha256'), role_id=role_id)
             db.session.add(newUser)
             db.session.commit()
-            login_user(user, remember=True)
+            login_user(newUser, remember=True)
             flash("Account created", category="success")
             return redirect(url_for('views.home'))
+        
+    roles = Role.query.filter(Role.id != 1).all()
 
-    return render_template("sign_up.html", user=current_user)
+    return render_template("sign_up.html", user=current_user, roles=roles)
 
 
 @auth.route('/login', methods=['GET', 'POST'])
@@ -84,3 +88,5 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('auth.login'))
+
+
