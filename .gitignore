@@ -1,6 +1,7 @@
 .vscode
 website/__pycache__
 test/__pycache__
+modules/ai_diagnosis_prediction/__pycache__
 .pytest_cache
 instance
 
