@@ -1,3 +1,7 @@
-flask
-flask-login
-flask-sqlalchemy
+datasets==3.1.0
+Flask==3.1.0
+Flask_Login==0.6.3
+flask_sqlalchemy==3.1.1
+torch==2.3.0
+transformers==4.46.3
+Werkzeug==3.1.3

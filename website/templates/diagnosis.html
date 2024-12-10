@@ -1,5 +1,32 @@
 {% extends "_baseTemplate.html" %}
 {% block title %}Diagnosis{% endblock %}
 {% block content %}
-<h1>Diagnosis Page</h1>
+
+<br />
+
+<form method="POST">
+    <h3 align="center">Generate diagnosis:</h3>
+
+    <div class="form-group">
+        <label for="symptoms">Symptoms</label>
+        <input 
+            type="text"
+            class="form-control"
+            id="symptoms"
+            name="symptoms"
+            placeholder="Enter symptoms (e.g. Fever, Cough)"
+        />
+    </div>
+
+    <br />
+
+    <button type="submit" class="btn btn-primary">Generate Diagnosis</button>
+</form>
+
+{% if diagnosis %}
+    <div class="mt-3">
+        <h4>Diagnosis: {{ diagnosis }}</h4>
+    </div>
+{% endif %}
+
 {% endblock %}
