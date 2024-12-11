@@ -1,9 +1,9 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for
-from .models import User
+from flask import Blueprint, render_template, request, flash, redirect, url_for, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 import re
-from . import db
 from flask_login import login_user, login_required, logout_user, current_user
+from .models import User
+
 
 auth = Blueprint('auth', __name__)
 
@@ -25,15 +25,24 @@ def validatePassword(password):
     return True
 
 
+
 @auth.route('/sign-up', methods=['GET', 'POST'])
 def sign_up():
     if request.method == 'POST':
         name = request.form.get('name')
         email = request.form.get('email')
         password = request.form.get('password')
-        confirmedPassword = request.form.get('confirmedPassword')    
+        confirmedPassword = request.form.get('confirmedPassword')
+        birthDate = request.form.get('birthDate')  
+        roleId = request.form.get('role')
 
-        user = User.query.filter_by(email = email).first()
+        conn = current_app.db
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT * FROM [User] WHERE email = ?", email)
+
+        user = cursor.fetchone()
+        print(user)
 
         if user:
             flash("Email already exists", category="error")
@@ -46,14 +55,24 @@ def sign_up():
         elif password != confirmedPassword:
             flash("Passwords do not match", category="error")
         else:
-            newUser = User(name=name, email=email, password=generate_password_hash(password, method='pbkdf2:sha256'))
-            db.session.add(newUser)
-            db.session.commit()
-            login_user(user, remember=True)
+            hashedPassword = generate_password_hash(password, method='pbkdf2:sha256')
+            cursor.execute("INSERT INTO [User] (username, email, password, birth_date, roleid) VALUES (?, ?, ?, ?, ?)", name, email, hashedPassword, birthDate, roleId)
+            conn.commit()
+
+            newUser = cursor.execute("SELECT * FROM [User] WHERE email = ?", email).fetchone()
+            activeUser = User(userid=newUser.userID,
+                              email=newUser.email,
+                              password=newUser.password,
+                              username=newUser.username,
+                              birth_date=newUser.birth_date,
+                              roleid = newUser.roleID)
+            
+            login_user(activeUser, remember=True)
             flash("Account created", category="success")
             return redirect(url_for('views.home'))
 
-    return render_template("sign_up.html", user=current_user)
+    roles = current_app.db.cursor().execute("SELECT * FROM Role WHERE roleID != 1").fetchall()
+    return render_template("sign_up.html", user=current_user, roles=roles)
 
 
 @auth.route('/login', methods=['GET', 'POST'])
@@ -62,12 +81,25 @@ def login():
         email = request.form.get('email')
         password = request.form.get('password')
 
-        user = User.query.filter_by(email = email).first()
+        conn = current_app.db
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT * FROM [User] WHERE email = ?", email)
+
+        user = cursor.fetchone()
+        print(user)
 
         if user:
             if check_password_hash(user.password, password):
                 flash("Logged in successfully", category="success")
-                login_user(user, remember=True)
+                activeUser = User(userid=user.userID,
+                                  email=user.email,
+                                  password=user.password,
+                                  username=user.username,
+                                  birth_date=user.birth_date,
+                                  roleid=user.roleID)
+                
+                login_user(activeUser, remember=True)
                 return redirect(url_for('views.home'))
             else:
                 flash("Incorrect password, try again", category="error")
