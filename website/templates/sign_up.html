@@ -50,6 +50,27 @@
         />
     </div>
 
+    <div class="form-group">
+        <label for="Birth Date">Birth Date</label>
+        <input 
+            type="date"
+            class="form-control"
+            id="birthDate_id"
+            name="birthDate"
+            placeholder="Enter birth date"
+        />
+    </div>
+
+    <div class="form-group">
+        <label for="role">Role</label>
+        <select class="form-control" id="role_id" name="role" required>
+            <option value="" disabled selected>Choose a role</option>
+            {% for role in roles %}
+                <option value="{{ role.roleID }}">{{ role.role_name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
     <br />
 
     <button type="submit" class="btn btn-primary">Sign up</button>
