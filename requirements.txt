@@ -5,3 +5,4 @@ flask_sqlalchemy==3.1.1
 torch==2.3.0
 transformers==4.46.3
 Werkzeug==3.1.3
+  
