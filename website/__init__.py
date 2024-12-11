@@ -1,17 +1,22 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from os import path
 from flask_login import LoginManager
+from flask import Flask, jsonify, request
+import pyodbc
+from .models import User
 
-db = SQLAlchemy()
-DB_NAME = "database.db"
+
+server = 'tcp:telemedix.database.windows.net,1433'
+database = 'telemedix'
+username = 'telemedix'
+password = 'ProiectMOPS!'
+driver = '{ODBC Driver 18 for SQL Server}'  # Ensure this driver is installed
+
+connection_string = f'DRIVER={driver};SERVER={server};PORT=1433;DATABASE={database};UID={username};PWD={password}'
 
 
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'hjshjhdjah kjshkjdhjs'
-    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
-    db.init_app(app)
 
     from .views import views
     from .auth import auth
@@ -19,10 +24,7 @@ def create_app():
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
 
-    from .models import User
-    
-    with app.app_context():
-        db.create_all()
+    app.db = get_db_connection()
 
     loginManager = LoginManager()
     loginManager.login_view = 'auth.login'
@@ -30,12 +32,27 @@ def create_app():
 
     @loginManager.user_loader
     def load_user(id):
-        return User.query.get(int(id))
+        cursor = app.db.cursor()
+        cursor.execute("SELECT * FROM [User] WHERE userid = ?", id)
+        user = cursor.fetchone()
+        if user:
+            return User(userid=user[0],
+                        email=user[1],
+                        password=user[2],
+                        username=user[3],
+                        birth_date=user[4],
+                        roleid=user[5])
+
+        return None
 
     return app
 
 
-def create_database(app):
-    if not path.exists('website/' + DB_NAME):
-        db.create_all(app=app)
-        print('Created Database!')
+def get_db_connection():
+    try:
+        conn = pyodbc.connect(connection_string)
+        print("Database connection established")
+        return conn
+    except Exception as e:
+        print("Database connection failed:", e)
+        return None
