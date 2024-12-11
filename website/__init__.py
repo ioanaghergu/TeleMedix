@@ -24,8 +24,8 @@ def create_app():
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
 
-    app.db = get_db_connection()
-
+    app.db = get_db_connection() 
+       
     loginManager = LoginManager()
     loginManager.login_view = 'auth.login'
     loginManager.init_app(app)
