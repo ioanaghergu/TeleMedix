@@ -1,5 +1,23 @@
 {% extends "_baseTemplate.html" %}
 {% block title %}Home{% endblock %}
 {% block content %}
-<h1>Home Page</h1>
+<h1 style="text-align: center; padding: 20px;">Home Page</h1>
+<div class="row">
+    <div class="col-sm-6 mb-3 mb-sm-0">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Medical staff</h5>
+          <a href="/doctors-list" class="btn btn-primary">See our doctors</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Consultations</h5>
+          <a href="/consultation-form" class="btn btn-primary">Request an appointment</a>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}
