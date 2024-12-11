@@ -19,10 +19,12 @@ def create_app():
 
     from .views import views
     from .auth import auth
+    from .account import account
     from .generate_diagnosis import diagnosis
 
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
+    app.register_blueprint(account, url_prefix='/')
     app.register_blueprint(diagnosis, url_prefix='/')
 
     app.db = get_db_connection() 
