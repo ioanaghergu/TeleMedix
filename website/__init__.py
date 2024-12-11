@@ -1,6 +1,5 @@
 from flask import Flask
 from flask_login import LoginManager
-from flask import Flask, jsonify, request
 import pyodbc
 from .models import User
 
@@ -20,9 +19,11 @@ def create_app():
 
     from .views import views
     from .auth import auth
+    from .generate_diagnosis import diagnosis
 
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
+    app.register_blueprint(diagnosis, url_prefix='/')
 
     app.db = get_db_connection() 
        
@@ -32,7 +33,8 @@ def create_app():
 
     @loginManager.user_loader
     def load_user(id):
-        cursor = app.db.cursor()
+        conn = app.db
+        cursor = conn.cursor()
         cursor.execute("SELECT * FROM [User] WHERE userid = ?", id)
         user = cursor.fetchone()
         if user:
