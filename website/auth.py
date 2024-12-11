@@ -42,7 +42,6 @@ def sign_up():
         cursor.execute("SELECT * FROM [User] WHERE email = ?", email)
 
         user = cursor.fetchone()
-        print(user)
 
         if user:
             flash("Email already exists", category="error")
@@ -116,3 +115,5 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('auth.login'))
+
+
