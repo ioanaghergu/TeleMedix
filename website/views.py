@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template
 from flask_login import login_required, current_user
+import time
 from sqlalchemy.orm import joinedload
 
 from website.models import Doctor, Specialization
@@ -12,8 +13,9 @@ def home():
     return render_template("home.html", user=current_user)
 
 @views.route('/account')
+@login_required
 def account():
-    return render_template("account.html")
+    return render_template("account/account.html", user=current_user, time=time)
 
 @views.route('/appointments')
 @login_required
