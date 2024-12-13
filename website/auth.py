@@ -86,7 +86,6 @@ def login():
         cursor.execute("SELECT * FROM [User] WHERE email = ?", email)
 
         user = cursor.fetchone()
-        print(user)
 
         if user:
             if check_password_hash(user.password, password):
