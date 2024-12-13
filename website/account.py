@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from website.models import User
-from . import db
+from . import database as db
 from .auth import validateEmail, validatePassword
 import time
 
