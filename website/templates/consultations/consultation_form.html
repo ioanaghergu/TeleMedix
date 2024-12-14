@@ -73,6 +73,7 @@
         for (var i = 0; i < options.length; i++) {
             var option = options[i];
             if (option.getAttribute('data-specialization') == specializationId) {
+                console.log(option.value);
                 option.style.display = 'block';
                 found = true;
             } else {
