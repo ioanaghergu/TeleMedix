@@ -14,6 +14,10 @@
                 <input type="text" class="form-control" id="name" name="name" value="{{ user.username }}">
             </div>
             <div class="form-group mb-3">
+                <label for="birth_date" class="form-label">Birth Date</label>
+                <input type="date" class="form-control" id="birth_date" name="birth_date" value="{{ user.birth_date }}">
+            </div>            
+            <div class="form-group mb-3">
                 <label for="email" class="form-label">Email address</label>
                 <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}">
             </div>

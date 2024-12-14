@@ -1,0 +1,96 @@
+{% extends "_baseTemplate.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">My Consultations</h2>
+
+     <!-- Filtering and Sorting Form -->
+     <form method="GET" action="{{ url_for('consultation.get_consultations') }}" class="mb-4">
+        <div class="form-row align-items-center">
+            <!-- Status Filter -->
+            <div class="col-auto">
+                <label for="status" class="sr-only">Status</label>
+                <select class="form-control" id="status" name="status">
+                    <option value="" {% if not status_filter %}selected{% endif %}>All</option>
+                    <option value="Active" {% if status_filter == 'Active' %}selected{% endif %}>Active</option>
+                    <option value="Cancelled" {% if status_filter == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+                    <option value="Attended" {% if status_filter == 'Attended' %}selected{% endif %}>Attended</option>
+                </select>
+            </div>
+
+            <!-- Date Order -->
+            <div class="col-auto">
+                <label for="order" class="sr-only">Order</label>
+                <select class="form-control" id="order" name="order">
+                    <option value="asc" {% if order == 'asc' %}selected{% endif %}>Oldest First</option>
+                    <option value="desc" {% if order == 'desc' %}selected{% endif %}>Newest First</option>
+                </select>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">Apply</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Doctor</th>
+                    <th scope="col">Notes</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appointment in appointments %}
+                    <tr>
+                        <td>{{ appointment.appointment_date }}</td>
+                        <td>{{ appointment.username }}</td>
+                        <td>{{ appointment.notes }}</td>
+                        
+                       <!-- Status -->
+                       <td>
+                        <span class="badge 
+                            {% if appointment.status == 'Active' %} badge-success
+                            {% elif appointment.status == 'Cancelled' %} badge-warning
+                            {% else %} badge-secondary {% endif %}">
+                            {{ appointment.status }}
+                        </span>
+                    </td>
+
+                    <!-- Actions -->
+                    <td>
+                        {% if appointment.status == 'Active' %}
+                            <!-- Cancel Button -->
+                            <form method="POST" action="{{ url_for('consultation.cancel_consultation', appointment_id=appointment['appointmentID']) }}" class="mb-2">
+                                <input 
+                                    type="text" 
+                                    name="cancellation_reason" 
+                                    placeholder="Reason for cancellation (optional)" 
+                                    class="form-control mb-2" 
+                                />
+                                <button type="submit" class="btn btn-warning btn-sm">Cancel</button>
+                            </form>
+                        {% endif %}
+                        {% if appointment.status in ['Cancelled', 'Attended'] %}
+                            <!-- Delete Button -->
+                            <form method="POST" action="{{ url_for('consultation.delete_consultation', appointment_id=appointment['appointmentID']) }}">
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="3" class="text-center">No attended consultations found.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
