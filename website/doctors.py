@@ -8,6 +8,6 @@ doctor = Blueprint('doctor', __name__)
 def get_doctors():
     conn = current_app.db
     cursor = conn.cursor()
-    doctors = cursor.execute("SELECT [username], [specialization_name] FROM [Medic], [User], [Specialization] WHERE [User].[userID] = [Medic].[medicID] AND [Medic].[specializationID] = [Specialization].[specializationID]").fetchall()
+    doctors = cursor.execute("SELECT [username], [specialization_name] FROM [Medic] LEFT JOIN [Specialization] ON [Medic].[specializationID] = [Specialization].[specializationID] INNER JOIN [User] ON [User].[userID] = [Medic].[medicID]").fetchall()
 
     return render_template("doctors/doctors_list.html", doctors=doctors, user=current_user)

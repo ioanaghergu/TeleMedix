@@ -66,6 +66,14 @@ def sign_up():
                               birth_date=newUser.birth_date,
                               roleid = newUser.roleID)
             
+            role = cursor.execute("SELECT * FROM Role WHERE roleID = ?", roleId).fetchone()
+            if role.role_name == 'DOCTOR':
+                cursor.execute("INSERT INTO [Medic] (medicID) VALUES (?)", newUser.userID)
+                conn.commit()
+            elif role.role_name == 'PATIENT':
+                cursor.execute("INSERT INTO [Pacient] (pacientID) VALUES (?)", newUser.userID)
+                conn.commit()
+
             login_user(activeUser, remember=True)
             flash("Account created", category="success")
             return redirect(url_for('views.home'))
