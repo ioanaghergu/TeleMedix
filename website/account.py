@@ -1,12 +1,24 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, current_app
 from flask_login import login_required, current_user, login_user, logout_user
 from werkzeug.security import check_password_hash, generate_password_hash
+from datetime import datetime
 from website.models import User
 from .auth import validateEmail, validatePassword
 import time
 
 account = Blueprint('account', __name__)
 
+def validate_birthday(birth_date):
+    if not birth_date:
+        return False, "Birth date is required."
+    try:
+        birth_date_obj = datetime.strptime(birth_date, "%Y-%m-%d")
+        if birth_date_obj > datetime.now():
+            return False, "Birth date cannot be in the future."
+        return True, None
+    except ValueError:
+        return False, "Invalid birth date format. Please use YYYY-MM-DD."
+    
 @account.route('/edit', methods=['GET', 'POST'])
 @login_required
 def edit_account():
@@ -15,6 +27,7 @@ def edit_account():
         email = request.form.get('email')
         password = request.form.get('password')
         confirm_password = request.form.get('confirm_password')
+        birth_date = request.form.get('birth_date')
 
         # Validation for the fields
         conn = current_app.db
@@ -38,12 +51,16 @@ def edit_account():
         elif password and password != confirm_password:
             flash("Passwords do not match.", category='error')
         else:
+            valid_birthday, birthday_error = validate_birthday(birth_date)
+            if not valid_birthday:
+                flash(birthday_error, category='error')
+                return render_template('account/edit_account.html', user=current_user, time=time)
             try:
                 if password:  # Only update password if provided
                     newPassword = generate_password_hash(password, method='pbkdf2:sha256')
-                    cursor.execute("UPDATE [User] SET username = ?, email = ?, password = ? WHERE userID = ?", name, email, newPassword, current_user.userid)
+                    cursor.execute("UPDATE [User] SET username = ?, email = ?, password = ?, birth_date = ? WHERE userID = ?", name, email, newPassword, birth_date, current_user.userid)
                 else:
-                    cursor.execute("UPDATE [User] SET username = ?, email = ? WHERE userID = ?", name, email, current_user.userid)
+                    cursor.execute("UPDATE [User] SET username = ?, email = ?, birth_date = ? WHERE userID = ?", name, email, birth_date, current_user.userid)
                 
                 conn.commit()
 
