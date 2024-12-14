@@ -4,11 +4,16 @@
 
 <br />
 
-<form method="POST">
-    <h3 align="center">Generate diagnosis:</h3>
+<form 
+    method="POST" 
+    enctype="multipart/form-data"
+    class="p-4 border rounded bg-light"
+    style="max-width: 600px; margin: auto;"
+>
+    <h3 align="center">Generate Diagnosis</h3>
 
     <div class="form-group">
-        <label for="symptoms">Symptoms</label>
+        <label for="symptoms">Enter Symptoms Manually</label>
         <input 
             type="text"
             class="form-control"
@@ -20,13 +25,51 @@
 
     <br />
 
-    <button type="submit" class="btn btn-primary">Generate Diagnosis</button>
+    <div class="form-group">
+        <label for="pdf">Upload PDF for Symptoms Extraction</label>
+        <div class="custom-file">
+            <input
+                type="file"
+                class="custom-file-input"
+                id="pdf"
+                name="pdf"
+                accept="application/pdf"
+            />
+            <label class="custom-file-label" for="pdf">Choose file or drag and drop</label>
+        </div>
+    </div>
+
+    <br />
+
+    <button type="submit" class="btn btn-primary btn-block" onclick="this.form.style.display='none'; document.getElementById('loading').style.display='block';">Generate Diagnosis</button>
 </form>
 
-{% if diagnosis %}
-    <div class="mt-3">
-        <h4>Diagnosis: {{ diagnosis }}</h4>
+<div id="loading" style="display: none; text-align: center; margin-top: 20px;">
+    <div class="spinner-border text-primary" role="status">
+        <span class="sr-only">Loading...</span>
     </div>
+    <p>Processing your request, please wait...</p>
+</div>
+
+{% if symptoms %}
+    <form class="p-4 border rounded bg-light mt-3" style="max-width: 600px; margin: auto;">
+        <h4 align="center">Extracted Symptoms</h4>
+        <div class="form-group">
+            <textarea class="form-control" rows="4" readonly>
+{% for symptom in symptoms %}{{ symptom }}
+{% endfor %}
+            </textarea>
+        </div>
+    </form>
+{% endif %}
+
+{% if diagnosis %}
+    <form class="p-4 border rounded bg-light mt-3" style="max-width: 600px; margin: auto;">
+        <h4 align="center">Diagnosis</h4>
+        <div class="form-group">
+            <textarea class="form-control" rows="2" readonly>{{ diagnosis }}</textarea>
+        </div>
+    </form>
 {% endif %}
 
 {% endblock %}
