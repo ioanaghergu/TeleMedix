@@ -31,8 +31,10 @@ def add_consultation():
         if existing_appointment:
             flash("There is already an appointment with this doctor at the same date and time", category="error")
             return redirect(url_for('consultation.add_consultation'))
+        
+        print(current_user.userid, doctorId, specializationId, appointment_datetime, notes)
 
-        cursor.execute("INSERT INTO [Appointment] ([pacientID], [medicID], [specializationID], [appointment_date], [notes], [serviceID]) VALUES (?, ?, ?, ?, ?, ?)", current_user.userid, doctorId, specializationId, appointment_datetime, notes, 1)
+        cursor.execute("INSERT INTO [Appointment] ([pacientID], [medicID], [appointment_date], [notes], [serviceID]) VALUES (?, ?, ?, ?, ?)", current_user.userid, doctorId, appointment_datetime, notes, 1)
         conn.commit()
 
         flash("Your consultation form was completed successfully", category="success")
