@@ -35,11 +35,7 @@
         <div class="navbar-nav">
           {% if current_user.is_authenticated %}
             <a class="nav-item nav-link" id="home" href="/">Home</a>
-<<<<<<< HEAD
             <a class="nav-item nav-link" id="diagnosis" href="/diagnosis">Generate diagnosis</a>
-            <a class="nav-item nav-link" id="account" href="{{ url_for('views.account') }}">My Account</a>
-=======
->>>>>>> origin/main
             <a class="nav-item nav-link" id="logout" href="/logout">Logout</a>
             <a class="nav-item nav-link" id="account" href="{{ url_for('views.account') }}">My Account</a>
             <a class="nav-item nav-link" id="appointments" href="/attended-consultations">My Appointments</a>
