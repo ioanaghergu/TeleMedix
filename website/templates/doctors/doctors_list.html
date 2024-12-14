@@ -8,8 +8,8 @@
                 <ul class="list-group">
                     {% for doctor in doctors %}
                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                            {{ doctor.name }}
-                            <span class="badge badge-primary badge-pill">{{ doctor.specialization.specialization_name }}</span>
+                            {{ doctor.username }}
+                            <span class="badge badge-primary badge-pill">{{ doctor.specialization_name }}</span>
                         </li>
                     {% endfor %}
                 </ul>

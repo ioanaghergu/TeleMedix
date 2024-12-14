@@ -1,9 +1,6 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, current_app, render_template
 from flask_login import login_required, current_user
 import time
-from sqlalchemy.orm import joinedload
-
-from website.models import Doctor, Specialization
 
 views = Blueprint('views', __name__)
 
@@ -29,11 +26,13 @@ def diagnosis():
 @views.route('/doctors')
 @login_required
 def doctors_list():
-    return render_template("doctors_list.html")
+    return render_template("doctors/doctors_list.html")
 
 @views.route('/consultation-form')
 @login_required
 def consultation_form():
-    doctors = Doctor.query.options(joinedload(Doctor.specialization)).all()
-    specializatons = Specialization.query.all()
-    return render_template("consultation_form.html", user=current_user, doctors=doctors, specializations=specializatons)
+    conn = current_app.db
+    cursor = conn.cursor()
+    doctors = cursor.execute("SELECT * FROM [Medic], [User], [Specialization] WHERE [User].[userID] = [Medic].[medicID] AND [Medic].[specializationID] = [Specialization].[specializationID]").fetchall()
+    specializatons = cursor.execute("SELECT * FROM [Specialization]").fetchall()
+    return render_template("consultations/consultation_form.html", user=current_user, doctors=doctors, specializations=specializatons)
