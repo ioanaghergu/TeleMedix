@@ -41,7 +41,7 @@ class Medic():
         return self.medicid
     
 class Appointment():
-    def __init__(self, appointmentid, patientid, medicid, appointment_date, availabilityid, serviceid, notes, specializationid):
+    def __init__(self, appointmentid, patientid, medicid, appointment_date, availabilityid, serviceid, notes):
         self.appointmentid = appointmentid
         self.patientid = patientid
         self.medicid = medicid
@@ -49,7 +49,6 @@ class Appointment():
         self.availabilityid = availabilityid
         self.serviceid = serviceid
         self.notes = notes
-        self.specializationid = specializationid
 
     def get_id(self):
         return self.appointmentid
