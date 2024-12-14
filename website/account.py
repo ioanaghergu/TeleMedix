@@ -1,5 +1,5 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for
-from flask_login import login_required, current_user
+from flask import Blueprint, render_template, request, flash, redirect, url_for, current_app
+from flask_login import login_required, current_user, login_user, logout_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from website.models import User
 from . import database as db
@@ -18,8 +18,15 @@ def edit_account():
         confirm_password = request.form.get('confirm_password')
 
         # Validation for the fields
-        existing_user = User.query.filter_by(email=email).first()
-        if existing_user and existing_user.id != current_user.id:
+        conn = current_app.db
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT * FROM [User] WHERE email = ?", email)
+
+        existing_user = cursor.fetchone()
+        print(current_user.userid)
+
+        if existing_user and existing_user.userID != current_user.userid:
             flash("This email is already in use.", category='error')
             return render_template('account/edit_account.html', user=current_user, time=time)
         
@@ -33,12 +40,24 @@ def edit_account():
             flash("Passwords do not match.", category='error')
         else:
             try:
-                # Update
-                current_user.name = name
-                current_user.email = email
                 if password:  # Only update password if provided
-                    current_user.password = generate_password_hash(password, method='pbkdf2:sha256')
-                db.session.commit()
+                    newPassword = generate_password_hash(password, method='pbkdf2:sha256')
+                    cursor.execute("UPDATE [User] SET username = ?, email = ?, password = ? WHERE userID = ?", name, email, newPassword, current_user.userid)
+                else:
+                    cursor.execute("UPDATE [User] SET username = ?, email = ? WHERE userID = ?", name, email, current_user.userid)
+                
+                conn.commit()
+
+                updatedUser = cursor.execute("SELECT * FROM [User] WHERE userID = ?", current_user.userid).fetchone()
+                
+                activeUser = User(userid=updatedUser.userID,
+                              email=updatedUser.email,
+                              password=updatedUser.password,
+                              username=updatedUser.username,
+                              birth_date=updatedUser.birth_date,
+                              roleid =updatedUser.roleID)
+                
+                login_user(activeUser, remember=True)
                 flash('Profile updated successfully!', category='success')
                 return redirect(url_for('views.account'))
             except Exception as e:
@@ -61,8 +80,12 @@ def delete_account():
         return redirect(url_for('account.confirm_delete'))
     
     if check_password_hash(current_user.password, password):
-        db.session.delete(current_user)
-        db.session.commit()
+        conn = current_app.db
+        cursor = conn.cursor()
+
+        cursor.execute("DELETE FROM [User] WHERE userID = ?", current_user.userid)
+        conn.commit()
+        logout_user()
         flash("Account deleted successfully.", category="success")
         return redirect(url_for('auth.login'))
     else:
