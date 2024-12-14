@@ -33,6 +33,6 @@ def doctors_list():
 def consultation_form():
     conn = current_app.db
     cursor = conn.cursor()
-    doctors = cursor.execute("SELECT * FROM [Medic], [User], [Specialization] WHERE [User].[userID] = [Medic].[medicID] AND [Medic].[specializationID] = [Specialization].[specializationID]").fetchall()
+    doctors = cursor.execute("SELECT * FROM [Medic], [User], [Specialization] WHERE [User].[userID] = [Medic].[medicID] AND [Medic].[specializationID] = [Specialization].[specializationID] AND [User].[userID] <> ?", current_user.userid).fetchall()
     specializatons = cursor.execute("SELECT * FROM [Specialization]").fetchall()
     return render_template("consultations/consultation_form.html", user=current_user, doctors=doctors, specializations=specializatons)
