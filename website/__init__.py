@@ -32,7 +32,18 @@ def create_app():
     app.register_blueprint(consultation, url_prefix='/')
 
     app.db = get_db_connection() 
-       
+
+    cursor = app.db.cursor()
+    cursor.execute("SELECT * FROM [User] where userID = 1")
+    result = cursor.fetchone()
+    admin = User(userid=result[0], 
+                 email=result[1], 
+                 password=result[2], 
+                 username=result[3], 
+                 birth_date=result[4], 
+                 roleid=result[5])
+   
+   
     loginManager = LoginManager()
     loginManager.login_view = 'auth.login'
     loginManager.init_app(app)
