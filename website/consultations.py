@@ -43,6 +43,34 @@ def add_consultation():
     specializations = current_app.db.cursor().execute("SELECT * FROM [Specialization]").fetchall()
     return render_template("consultation_form.html", user=current_user, specializations=specializations)
 
+def retrieve_medic_consultations(order, user_id):
+    conn = current_app.db
+    cursor = conn.cursor()
+    query = """
+                SELECT 
+                [appointmentID], 
+                [appointment_date], 
+                [notes], 
+                [username], 
+                [specialization_name]
+            FROM 
+                [Appointment]
+            JOIN 
+                [Pacient] ON [Appointment].[pacientID] = [Pacient].[pacientID]
+            JOIN 
+                [User] ON [Pacient].[pacientID] = [User].[userID]
+            JOIN 
+                [Medic] ON [Appointment].[medicID] = [Medic].[medicID]
+            JOIN 
+                [Specialization] ON [Medic].[specializationID] = [Specialization].[specializationID]
+            WHERE 
+                [Appointment].[medicID] = ?
+            ORDER BY 
+                [appointment_date] {} """.format('DESC' if order == 'desc' else 'ASC')
+                
+    appointments = cursor.execute(query, (user_id,)).fetchall()
+    return(appointments)
+
 @consultation.route('/my-consultations', methods=['GET'])
 @login_required
 def get_consultations():
@@ -51,9 +79,11 @@ def get_consultations():
     
     status_filter = request.args.get('status')
     order = request.args.get('order', 'desc')
+    user_id = current_user.userid
     
-    query = """
-            SELECT 
+    if current_user.roleid == 2: # Retrieve patient's consultations  
+        query = """
+                SELECT 
                 [appointmentID], 
                 [appointment_date], 
                 [notes], 
@@ -71,8 +101,11 @@ def get_consultations():
                 [Appointment].[pacientID] = ?
             ORDER BY 
                 [appointment_date] {} """.format('DESC' if order == 'desc' else 'ASC')
-
-    appointments = cursor.execute(query, (current_user.userid,)).fetchall()
+                   
+        appointments = cursor.execute(query, (user_id,)).fetchall() 
+        
+    elif current_user.roleid == 3:
+        appointments = retrieve_medic_consultations(order, user_id)
     
     now = datetime.now()
     processed_appointments = []
@@ -113,8 +146,8 @@ def cancel_consultation(appointment_id):
 
     # Verify the consultation belongs to the current user and is in the future
     consultation = cursor.execute(
-        "SELECT [appointment_date], [notes] FROM [Appointment] WHERE [appointmentID] = ? AND [pacientID] = ?", 
-        (appointment_id, current_user.userid)).fetchone()
+         "SELECT [appointment_date], [notes] FROM [Appointment] WHERE [appointmentID] = ? AND ([pacientID] = ? OR [medicID] = ?)", 
+        (appointment_id, current_user.userid, current_user.userid)).fetchone()
 
     if consultation:
         consultation = dict(zip([column[0] for column in cursor.description], consultation))
@@ -146,8 +179,8 @@ def delete_consultation(appointment_id):
     cursor = conn.cursor()
 
     consultation = cursor.execute(
-        "SELECT [appointment_date], [notes] FROM [Appointment] WHERE [appointmentID] = ? AND [pacientID] = ?", 
-        (appointment_id, current_user.userid)).fetchone()
+         "SELECT [appointment_date], [notes] FROM [Appointment] WHERE [appointmentID] = ? AND ([pacientID] = ? OR [medicID] = ?)", 
+        (appointment_id, current_user.userid, current_user.userid)).fetchone()
 
     if consultation:
         consultation = dict(zip([column[0] for column in cursor.description], consultation))
