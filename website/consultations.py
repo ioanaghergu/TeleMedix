@@ -7,6 +7,10 @@ consultation = Blueprint('consultation', __name__)
 @consultation.route('/consultation-form', methods=['GET', 'POST'])
 @login_required
 def add_consultation():
+    doctor_id = request.args.get('doctorID')
+    specialization_id = request.args.get('specializationID')
+    print(doctor_id + " " + specialization_id)
+    
     if request.method == 'POST':
         specializationId = request.form.get('specialization')
         doctorId = request.form.get('doctor')
