@@ -34,9 +34,11 @@
                 id="pdf"
                 name="pdf"
                 accept="application/pdf"
+                onchange="updateFileName()"
             />
             <label class="custom-file-label" for="pdf">Choose file or drag and drop</label>
         </div>
+        <small id="file-name" class="form-text text-muted" style="display: none;">No file selected</small>
     </div>
 
     <br />
@@ -64,12 +66,62 @@
 {% endif %}
 
 {% if diagnosis %}
-    <form class="p-4 border rounded bg-light mt-3" style="max-width: 600px; margin: auto;">
+    <form class="p-4 border rounded bg-light mt-3" style="max-width: 600px; margin: auto;" method="POST" action="{{ url_for('diagnosis.suggest_doctors') }}">
         <h4 align="center">Diagnosis</h4>
         <div class="form-group">
             <textarea class="form-control" rows="2" readonly>{{ diagnosis }}</textarea>
         </div>
+        <input type="hidden" name="diagnosis" value="{{ diagnosis }}">
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-secondary">Suggest Doctors</button>
+        </div>
     </form>
 {% endif %}
 
+{% if doctors %}
+    <div id="doctor-suggestions" class="mt-3">
+        <div class="p-4 border rounded bg-light" style="max-width: 600px; margin: auto;">
+            <h4 align="center">Suggested Doctors</h4>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Specialization</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for doctor in doctors %}
+                    <tr>
+                        <td>{{ doctor.name }}</td>
+                        <td>{{ doctor.specialization }}</td>
+                        <td>
+                            <form action="{{ url_for('consultation.add_consultation') }}" method="POST">
+                                <input type="hidden" name="doctorID" value="{{ doctor.medicID }}">
+                                <input type="hidden" name="specializationID" value="{{ doctor.specializationID }}">
+                                <button type="submit" class="btn btn-success btn-sm">
+                                    Book Appointment
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endif %}
+
+<script>
+    // Function to update the label text with the selected file name
+    function updateFileName() {
+        const input = document.getElementById('pdf');
+        const fileName = input.files[0]?.name || 'No file selected';
+        const fileNameDisplay = document.getElementById('file-name');
+
+        // Show the file name under the input field
+        fileNameDisplay.textContent = fileName;
+        fileNameDisplay.style.display = fileName ? 'block' : 'none';
+    }
+</script>
 {% endblock %}
