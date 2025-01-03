@@ -34,9 +34,11 @@
                 id="pdf"
                 name="pdf"
                 accept="application/pdf"
+                onchange="updateFileName()"
             />
             <label class="custom-file-label" for="pdf">Choose file or drag and drop</label>
         </div>
+        <small id="file-name" class="form-text text-muted" style="display: none;">No file selected</small>
     </div>
 
     <br />
@@ -78,7 +80,7 @@
 
 {% if doctors %}
     <div id="doctor-suggestions" class="mt-3">
-        <form class="p-4 border rounded bg-light" style="max-width: 600px; margin: auto;">
+        <div class="p-4 border rounded bg-light" style="max-width: 600px; margin: auto;">
             <h4 align="center">Suggested Doctors</h4>
             <table class="table table-bordered">
                 <thead>
@@ -94,17 +96,32 @@
                         <td>{{ doctor.name }}</td>
                         <td>{{ doctor.specialization }}</td>
                         <td>
-                            <a href="{{ url_for('consultation.add_consultation', doctorID=doctor.medicID, specializationID=doctor.specializationID) }}" class="btn btn-success btn-sm">
-                                Book Appointment (Doctor: {{ doctor.medicID }}, Specialization: {{ doctor.specializationID }})
-                            </a>                            
+                            <form action="{{ url_for('consultation.add_consultation') }}" method="POST">
+                                <input type="hidden" name="doctorID" value="{{ doctor.medicID }}">
+                                <input type="hidden" name="specializationID" value="{{ doctor.specializationID }}">
+                                <button type="submit" class="btn btn-success btn-sm">
+                                    Book Appointment
+                                </button>
+                            </form>
                         </td>
-                        
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
-        </form>
+        </div>
     </div>
 {% endif %}
 
+<script>
+    // Function to update the label text with the selected file name
+    function updateFileName() {
+        const input = document.getElementById('pdf');
+        const fileName = input.files[0]?.name || 'No file selected';
+        const fileNameDisplay = document.getElementById('file-name');
+
+        // Show the file name under the input field
+        fileNameDisplay.textContent = fileName;
+        fileNameDisplay.style.display = fileName ? 'block' : 'none';
+    }
+</script>
 {% endblock %}

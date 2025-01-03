@@ -10,7 +10,12 @@
             <select id="specialization" name="specialization" class="form-control" onchange="filterDoctors()" required>
                 <option value="" disabled selected>Select a specialization</option>
                 {% for specialization in specializations %}
-                    <option value="{{ specialization.specializationID }}">{{ specialization.specialization_name }}</option>
+                    <option value="{{ specialization.specializationID }}"
+                        {% if selected_specialization and specialization.specializationID == selected_specialization.specializationID %}
+                        selected
+                        {% endif %}>
+                        {{ specialization.specialization_name }}
+                    </option>
                 {% endfor %}
             </select>
         </div>
@@ -19,12 +24,23 @@
     <div class="form-group row mb-3">
         <label for="doctor" class="col-sm-2 col-form-label">Doctor:</label>
         <div class="col-sm-10">
-            <select id="doctor" name="doctor" class="form-control" disabled required>
+            <select id="doctor" name="doctor" class="form-control" required>
                 <option value="" disabled selected>Select a doctor</option>
                 {% for doctor in doctors %}
-                        <option value="{{ doctor.medicID }}" data-specialization="{{ doctor.specializationID }}" style="display: none;">{{ doctor.username }}</option>
+                    {% if selected_doctor and doctor.medicID == selected_doctor.medicID %}
+                        <option value="{{ doctor.medicID }}" 
+                                data-specialization="{{ doctor.specializationID }}"
+                                selected>
+                            {{ selected_doctor.username }}
+                        </option>
+                    {% else %}
+                        <option value="{{ doctor.medicID }}" 
+                                data-specialization="{{ doctor.specializationID }}">
+                            {{ doctor.username }}
+                        </option>
+                    {% endif %}
                 {% endfor %}
-            </select>
+            </select>            
         </div>
     </div>
 
@@ -52,6 +68,7 @@
 <script>
     function filterDoctors() {
         var specializationId = document.getElementById('specialization').value;
+        console.log(specializationId);
         var doctorSelect = document.getElementById('doctor');
         var options = doctorSelect.options;
         var found = false;
@@ -59,28 +76,21 @@
         // Clear previous selection
         doctorSelect.selectedIndex = 0;
 
-        // Enable the doctor select field
-        doctorSelect.disabled = false;
-
-        // Remove "No doctors found" option if it exists
+        // Hide all doctors initially
         for (var i = 0; i < options.length; i++) {
-            if (options[i].text === "No doctors found") {
-                doctorSelect.remove(i);
-                break;
-            }
+            options[i].style.display = 'none';
         }
 
+        // Show doctors that match the selected specialization
         for (var i = 0; i < options.length; i++) {
             var option = options[i];
             if (option.getAttribute('data-specialization') == specializationId) {
-                console.log(option.value);
                 option.style.display = 'block';
                 found = true;
-            } else {
-                option.style.display = 'none';
             }
         }
 
+        // If no doctors are found, add "No doctors found" option
         if (!found) {
             var noDoctorOption = document.createElement('option');
             noDoctorOption.value = "";
@@ -89,6 +99,13 @@
             noDoctorOption.text = "No doctors found";
             doctorSelect.appendChild(noDoctorOption);
         }
+        console.log(doctorSelect);
     }
+
+    // Call filterDoctors() when the page loads to handle default doctor visibility and pre-selection
+    window.onload = function() {
+        filterDoctors();
+    };
 </script>
+
 {% endblock %}
