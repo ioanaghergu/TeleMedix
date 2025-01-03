@@ -4,41 +4,80 @@ from datetime import datetime
 
 consultation = Blueprint('consultation', __name__)
 
-@consultation.route('/consultation-form', methods=['GET', 'POST'])
+@consultation.route('/consultation-form', methods=['POST'])
 @login_required
 def add_consultation():
+    doctorID = request.form.get('doctorID')
+    specializationID = request.form.get('specializationID')
+    print(specializationID)
+
     if request.method == 'POST':
-        specializationId = request.form.get('specialization')
-        doctorId = request.form.get('doctor')
-        appointment_datetime = request.form.get('appointmentDatetime')
-        notes = request.form.get('notes')
+        if not doctorID and not specializationID:
+            specializationId = request.form.get('specialization')
+            doctorId = request.form.get('doctor')
+            appointment_datetime = request.form.get('appointmentDatetime')
+            notes = request.form.get('notes')
 
-        # Convert appointment_datetime to a datetime object
-        try:
-            appointment_datetime = datetime.strptime(appointment_datetime, '%Y-%m-%dT%H:%M')
-        except ValueError:
-            flash("Invalid date and time format", category="error")
-            return redirect(url_for('consultation.add_consultation'))
+            # Convert appointment_datetime to a datetime object
+            try:
+                appointment_datetime = datetime.strptime(appointment_datetime, '%Y-%m-%dT%H:%M')
+            except ValueError:
+                flash("Invalid date and time format", category="error")
+                return redirect(url_for('consultation.add_consultation'))
 
-        if appointment_datetime < datetime.now():
-            flash("The date must be in the future", category="error")
-            return redirect(url_for('consultation.add_consultation'))
+            if appointment_datetime < datetime.now():
+                flash("The date must be in the future", category="error")
+                return redirect(url_for('consultation.add_consultation'))
 
-        conn = current_app.db
-        cursor = conn.cursor()
+            conn = current_app.db
+            cursor = conn.cursor()
 
-        existing_appointment = cursor.execute("SELECT * FROM [Appointment] WHERE [medicID] = ? AND [appointment_date] = ?", doctorId, appointment_datetime).fetchone()
-        if existing_appointment:
-            flash("There is already an appointment with this doctor at the same date and time", category="error")
-            return redirect(url_for('consultation.add_consultation'))
-        
-        print(current_user.userid, doctorId, specializationId, appointment_datetime, notes)
+            existing_appointment = cursor.execute("SELECT * FROM [Appointment] WHERE [medicID] = ? AND [appointment_date] = ?", doctorId, appointment_datetime).fetchone()
+            if existing_appointment:
+                flash("There is already an appointment with this doctor at the same date and time", category="error")
+                return redirect(url_for('consultation.add_consultation'))
+            
+            print(current_user.userid, doctorId, specializationId, appointment_datetime, notes)
 
-        cursor.execute("INSERT INTO [Appointment] ([pacientID], [medicID], [appointment_date], [notes], [serviceID]) VALUES (?, ?, ?, ?, ?)", current_user.userid, doctorId, appointment_datetime, notes, 1)
-        conn.commit()
+            cursor.execute("INSERT INTO [Appointment] ([pacientID], [medicID], [appointment_date], [notes], [serviceID]) VALUES (?, ?, ?, ?, ?)", current_user.userid, doctorId, appointment_datetime, notes, 1)
+            conn.commit()
 
-        flash("Your consultation form was completed successfully", category="success")
-        return redirect(url_for('views.home'))
+            flash("Your consultation form was completed successfully", category="success")
+            return redirect(url_for('views.home'))
+        else: 
+            conn = current_app.db
+            cursor = conn.cursor()
+
+            # Fetch the specialization and doctor based on the IDs
+            selected_specialization = cursor.execute("SELECT * FROM [Specialization] WHERE [specializationID] = ?", specializationID).fetchone()
+            selected_doctor = cursor.execute("""
+                SELECT m.*, u.username
+                FROM [Medic] m
+                JOIN [User] u ON m.medicID = u.userID
+                WHERE m.medicID = ?
+            """, (doctorID,)).fetchone()
+
+            print(selected_specialization)
+            print(selected_doctor)
+
+            # If either the specialization or doctor doesn't exist, return an error
+            if not selected_specialization or not selected_doctor:
+                flash("Invalid specialization or doctor ID", category="error")
+                return redirect(url_for('consultation.add_consultation'))
+
+            specializations = cursor.execute("SELECT * FROM [Specialization]").fetchall()
+            doctors = cursor.execute("SELECT * FROM [Medic]").fetchall()
+
+            print(specializations)
+            print(doctors)
+
+            # Render the template with the selected specialization and doctor pre-filled
+            return render_template("/consultations/consultation_form.html", 
+                                user=current_user, 
+                                specializations=specializations,
+                                doctors=doctors,
+                                selected_specialization=selected_specialization, 
+                                selected_doctor=selected_doctor)
 
     specializations = current_app.db.cursor().execute("SELECT * FROM [Specialization]").fetchall()
     return render_template("consultation_form.html", user=current_user, specializations=specializations)

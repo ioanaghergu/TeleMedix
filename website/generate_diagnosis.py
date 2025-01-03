@@ -1,9 +1,10 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask import Blueprint, render_template, request, flash, redirect, url_for, current_app
 from flask_login import login_required, current_user
 from modules.ai_diagnosis_prediction.DiagnosisClassifier import DiagnosisClassifier
 import PyPDF2
 import spacy
 import re
+import csv
 
 diagnosis = Blueprint('diagnosis', __name__)
 
@@ -63,3 +64,65 @@ def generate_diagnosis():
             flash("No symptoms could be extracted from the uploaded PDF.", category="error")
 
     return render_template('diagnosis.html', diagnosis=diagnosis_result, symptoms=extracted_symptoms)
+
+def get_suggested_doctors(diagnosis):
+    diagnosis_to_specialization = {}
+
+    try:
+        with open('Doctor_Versus_Disease.csv', mode='r') as file:
+            reader = csv.reader(file)
+            for row in reader:
+                if len(row) == 2:
+                    diagnosis_to_specialization[row[0].strip()] = row[1].strip()
+    except Exception as e:
+        print(f"Error reading CSV file: {e}")
+        return []
+
+    specialization = diagnosis_to_specialization.get(diagnosis)
+    if not specialization:
+        print(f"No specialization found for diagnosis: {diagnosis}")
+        return []
+
+    try:
+        conn = current_app.db 
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            SELECT medicID, s.specializationID, u.username AS doctor_name, s.specialization_name AS specialization_name
+            FROM Medic m
+            INNER JOIN Specialization s ON m.specializationID = s.specializationID
+            INNER JOIN [User] u ON m.medicID = u.userID
+            WHERE s.specialization_name = ? 
+        """, (specialization,))
+        
+        doctors = cursor.fetchall()
+        
+        if not doctors:
+            print(f"No doctors found for specialization: {specialization}")
+            return []
+
+        doctor_list = [
+            {"medicID":doctor[0], "specializationID": doctor[1], "name": doctor[2], "specialization": doctor[3]} for doctor in doctors
+        ]
+        
+        return doctor_list
+
+    except Exception as e:
+        print(f"Error querying the database: {e}")
+        return []
+
+@diagnosis.route('/suggest-doctors', methods=['POST'])
+@login_required
+def suggest_doctors():
+    diagnosis_name = request.form.get('diagnosis')
+    print(diagnosis_name)
+    if not diagnosis_name:
+        flash("No diagnosis provided to suggest doctors.", category="error")
+        return redirect(url_for('diagnosis.generate_diagnosis'))
+
+    doctors = get_suggested_doctors(diagnosis_name)
+    print(doctors)
+
+    if not doctors:
+        flash("No doctors found for the given diagnosis.", category="error")
+    return render_template('diagnosis.html', doctors=doctors, diagnosis=diagnosis_name)
