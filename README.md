@@ -4,10 +4,10 @@ Acest repository conține implementarea unei **Platforme de Telemedicină** care
 
 ## Funcționalități 🚀
 
-- **Consultații Online**: Permite pacienților să programeze consultații online cu medici specializați prin video sau chat. 🩺💬
-- **Sugestii AI pentru Specializări Medicale**: Utilizarea unui algoritm AI pentru a analiza simptomele și a sugera specializările medicale relevante. 🤖💡
-- **Extragerea Simptomelor din PDF**: Încărcarea fișierelor PDF pentru extragerea automată a simptomelor în rapoartele medicale. 📄🔍
-- **Gestionarea Programărilor**: Permite pacienților și medicilor să gestioneze programările și istoricul consultațiilor. 📅📈
+- **Consultații Online** 🩺💬
+- **Sugestii AI pentru Specializări Medicale** 🤖💡
+- **Extragerea Simptomelor din PDF** 📄🔍
+- **Gestionarea Programărilor** 📅📈
 
 ## Arhitectură și Design 🏗️
 
@@ -38,8 +38,6 @@ Sistemul utilizează **Patternul Strategy** pentru gestionarea componentei de in
 
 8. **Package Diagram**:
    ![Package Diagram](diagrams/Package%20Diagram.pdf)
-
-Here is the **README.md** content as requested:
 
 ## Installation 🛠️
 
