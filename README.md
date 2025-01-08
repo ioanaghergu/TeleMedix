@@ -39,42 +39,30 @@ Sistemul utilizează **Patternul Strategy** pentru gestionarea componentei de in
 8. **Package Diagram**:
    ![Package Diagram](diagrams/Package%20Diagram.pdf)
 
-## Installation 🛠️
+## Instalare 🛠️
 
-Follow the steps below to set up the **Telemedix** on your local machine:
-
-### 1. Clone the **repository** 📥
-
-Clone the repository to your local machine:
+### 1. Clonează **repository-ul** 📥
 
 ```bash
 git clone https://github.com/ioanaghergu/TeleMedix.git
 ```
 
-### 2. Install Dependencies 📦
-
-Navigate to the project folder and install all required dependencies:
+### 2. Instalează Dependențele 📦
 
 ```bash
 cd TeleMedix
 pip install -r requirements.txt
 ```
 
-### 3. AI Training Parameters Setup 🤖
+### 3. Configurarea Parametrilor AI 🤖
 
-This platform uses machine learning models for AI-based predictions. The model's training parameters are packaged into compressed files for easy management.
-
-#### To unzip the AI training parameters:
-
-Run the following PowerShell script to unzip the training parameters:
+#### Unzip:
 
 ```powershell
 .\setup_pull.ps1
 ```
 
-#### To zip the AI training parameters:
-
-If you need to compress the training parameters for upload or storage, use the following PowerShell script:
+#### Zip:
 
 ```powershell
 .\setup_push.ps1
@@ -82,5 +70,5 @@ If you need to compress the training parameters for upload or storage, use the f
 
 ---
 
-Once these steps are completed, your environment will be ready to use the **Telemedix** 🚀
+După acești pași, platforma este gata de utilizare! 🚀
 ```
