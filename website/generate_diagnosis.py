@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, current_app
 from flask_login import login_required, current_user
-from modules.ai_diagnosis_prediction.DiagnosisClassifier import DiagnosisClassifier
+from modules.ai_diagnosis_prediction.ai_context import AIContext
+from modules.ai_diagnosis_prediction.strategies.diagnosis_classifier_strategy import DiagnosisClassifierStrategy
 import PyPDF2
 import spacy
 import re
@@ -8,12 +9,14 @@ import csv
 
 diagnosis = Blueprint('diagnosis', __name__)
 
-model = DiagnosisClassifier()
+model_strategy = DiagnosisClassifierStrategy()
+ai_context = AIContext(model_strategy)
+
 nlp = spacy.load("en_core_web_sm")
 
 def generate_diagnosis_from_symptoms(symptoms):
-    model.load_model("modules/ai_diagnosis_prediction/trained_model")
-    predicted_disease = model.generate_disease_name(symptoms)
+    ai_context.load_model("modules/ai_diagnosis_prediction/trained_model")
+    predicted_disease = ai_context.generate_disease_name(symptoms)
     return predicted_disease
 
 def extract_symptoms_from_pdf(file):
@@ -115,13 +118,12 @@ def get_suggested_doctors(diagnosis):
 @login_required
 def suggest_doctors():
     diagnosis_name = request.form.get('diagnosis')
-    print(diagnosis_name)
+
     if not diagnosis_name:
         flash("No diagnosis provided to suggest doctors.", category="error")
         return redirect(url_for('diagnosis.generate_diagnosis'))
 
     doctors = get_suggested_doctors(diagnosis_name)
-    print(doctors)
 
     if not doctors:
         flash("No doctors found for the given diagnosis.", category="error")
