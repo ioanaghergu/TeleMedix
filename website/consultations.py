@@ -57,9 +57,6 @@ def add_consultation():
                 WHERE m.medicID = ?
             """, (doctorID,)).fetchone()
 
-            print(selected_specialization)
-            print(selected_doctor)
-
             # If either the specialization or doctor doesn't exist, return an error
             if not selected_specialization or not selected_doctor:
                 flash("Invalid specialization or doctor ID", category="error")
@@ -67,9 +64,6 @@ def add_consultation():
 
             specializations = cursor.execute("SELECT * FROM [Specialization]").fetchall()
             doctors = cursor.execute("SELECT * FROM [Medic]").fetchall()
-
-            print(specializations)
-            print(doctors)
 
             # Render the template with the selected specialization and doctor pre-filled
             return render_template("/consultations/consultation_form.html", 
