@@ -56,7 +56,40 @@
                     <tr>
                         <td>{{ appointment.appointment_date }}</td>
                         <td>{{ appointment.username }}</td>
-                        <td>{{ appointment.notes }}</td>
+
+                        <!-- Notes Section -->
+                        <td>
+                            <div id="notes-display-{{ appointment.appointmentID }}">
+                                <p>{{ appointment.notes or "No notes available." }}</p>
+                            </div>
+
+                            <!-- Notes Form -->
+                            <form 
+                                id="notes-form-{{ appointment.appointmentID }}" 
+                                method="POST" 
+                                action="{{ url_for('consultation.edit_notes', appointment_id=appointment['appointmentID']) }}" 
+                                style="display: none;"
+                            >
+                                <textarea 
+                                    class="form-control mb-2" 
+                                    name="notes" 
+                                    rows="2" 
+                                    placeholder="Edit notes here"
+                                >{{ appointment.notes }}</textarea>
+                                <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                            </form>
+                            
+                            {% if appointment.pacientID == current_user.userid and appointment.status == 'Active' %}
+                                <!-- Edit Button -->
+                                <button 
+                                    id="edit-button-{{ appointment.appointmentID }}" 
+                                    class="btn btn-info btn-sm" 
+                                    onclick="toggleEditForm({{ appointment.appointmentID }})"
+                                >
+                                    Edit
+                                </button>
+                            {% endif %}
+                        </td>
                         
                        <!-- Status -->
                        <td>
@@ -99,4 +132,24 @@
         </table>
     </div>
 </div>
+
+<script>
+    function toggleEditForm(appointmentID) {
+
+        const displayDiv = document.getElementById(`notes-display-${appointmentID}`);
+        const formDiv = document.getElementById(`notes-form-${appointmentID}`);
+        const editButton = document.getElementById(`edit-button-${appointmentID}`);
+
+        // Toggle visibility
+        if (formDiv.style.display === "none") {
+            formDiv.style.display = "block";  // Show the form
+            displayDiv.style.display = "none";  // Hide the display
+            editButton.style.display = "none";  // Hide the Edit button
+        } else {
+            formDiv.style.display = "none";  // Hide the form
+            displayDiv.style.display = "block";  // Show the display
+            editButton.style.display = "inline-block";  // Show the Edit button
+        }
+    }
+</script>
 {% endblock %}
