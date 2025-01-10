@@ -4,7 +4,7 @@ import pyodbc
 from .models import User
 
 
-server = 'tcp:telemedix.database.windows.net,1433'
+server = 'tcp:tele-medix.database.windows.net,1433'
 database = 'telemedix'
 username = 'telemedix'
 password = 'ProiectMOPS!'
