@@ -85,7 +85,8 @@ def retrieve_medic_consultations(order, user_id):
                 [appointment_date], 
                 [notes], 
                 [username], 
-                [specialization_name]
+                [specialization_name],
+                [Appointment].[pacientID]
             FROM 
                 [Appointment]
             JOIN 
@@ -121,7 +122,8 @@ def get_consultations():
                 [appointment_date], 
                 [notes], 
                 [username], 
-                [specialization_name]
+                [specialization_name],
+                [pacientID]
             FROM 
                 [Appointment]
             JOIN 
@@ -160,6 +162,7 @@ def get_consultations():
             "username": appointment.username,
             "specialization_name": appointment.specialization_name,
             "status": status,
+            "pacientID": appointment.pacientID
         })
     
     if status_filter:
@@ -233,4 +236,37 @@ def delete_consultation(appointment_id):
     conn.commit()
 
     flash("Consultation deleted successfully.", category="success")
+    return redirect(url_for('consultation.get_consultations'))
+
+
+@consultation.route('/edit-notes/<int:appointment_id>', methods=['POST'])
+@login_required
+def edit_notes(appointment_id):
+    conn = current_app.db
+    cursor = conn.cursor()
+
+    appointment = cursor.execute(
+        "SELECT [notes], [appointment_date], [pacientID] FROM [Appointment] WHERE [appointmentID] = ?", 
+        (appointment_id,)).fetchone()
+    
+    if not appointment or appointment[2] != current_user.userid:
+        flash("Consultation not found or you do not have permission to edit this consultation.", category="error")
+        return redirect(url_for('consultation.get_consultations'))
+
+    # Ensure status is Active
+    now = datetime.now()
+    if appointment.appointment_date < now or "Cancellation Reason:" in appointment.notes:
+        
+        flash("You can only edit notes for Active consultations.", category="error")
+        return redirect(url_for('consultation.get_consultations'))
+
+
+    new_notes = request.form.get('notes', '').strip()
+    # Update the notes in the database
+    cursor.execute(
+        "UPDATE [Appointment] SET [notes] = ? WHERE [appointmentID] = ?", 
+        (new_notes, appointment_id))
+    conn.commit()
+
+    flash("Notes updated successfully.", category="success")
     return redirect(url_for('consultation.get_consultations'))
