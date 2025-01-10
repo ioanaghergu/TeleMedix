@@ -1,5 +1,5 @@
 from modules.ai_diagnosis_prediction.strategies.prediction_strategy import PredictionStrategy
-from modules.ai_diagnosis_prediction.models.DiagnosisClassifier import DiagnosisClassifier
+from modules.ai_diagnosis_prediction.models.diagnosis_classifier import DiagnosisClassifier
 
 class DiagnosisClassifierStrategy(PredictionStrategy):
     def __init__(self):

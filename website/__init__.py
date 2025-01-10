@@ -1,17 +1,7 @@
 from flask import Flask
 from flask_login import LoginManager
-import pyodbc
 from .models import User
-
-
-server = 'tcp:tele-medix.database.windows.net,1433'
-database = 'telemedix'
-username = 'telemedix'
-password = 'ProiectMOPS!'
-driver = '{ODBC Driver 18 for SQL Server}'  # Ensure this driver is installed
-
-connection_string = f'DRIVER={driver};SERVER={server};PORT=1433;DATABASE={database};UID={username};PWD={password}'
-
+from .database_connection import DatabaseConnection  
 
 def create_app():
     app = Flask(__name__)
@@ -31,8 +21,14 @@ def create_app():
     app.register_blueprint(doctor, url_prefix='/')
     app.register_blueprint(consultation, url_prefix='/')
 
-    app.db = get_db_connection() 
-       
+    db_instance = DatabaseConnection(
+        server='tcp:tele-medix.database.windows.net,1433',
+        database='telemedix',
+        username='telemedix',
+        password='ProiectMOPS!',
+    )
+    app.db = db_instance.get_connection()
+
     loginManager = LoginManager()
     loginManager.login_view = 'auth.login'
     loginManager.init_app(app)
@@ -50,17 +46,6 @@ def create_app():
                         username=user[3],
                         birth_date=user[4],
                         roleid=user[5])
-
         return None
 
     return app
-
-
-def get_db_connection():
-    try:
-        conn = pyodbc.connect(connection_string)
-        print("Database connection established")
-        return conn
-    except Exception as e:
-        print("Database connection failed:", e)
-        return None

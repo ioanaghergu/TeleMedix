@@ -3,7 +3,6 @@ from flask_login import login_required, current_user, login_user, logout_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
 from website.models import User
-from . import database as db
 from .auth import validateEmail, validatePassword
 import time
 
