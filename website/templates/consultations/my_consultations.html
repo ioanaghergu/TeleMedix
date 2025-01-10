@@ -49,6 +49,7 @@
                     <th scope="col">Notes</th>
                     <th scope="col">Status</th>
                     <th scope="col">Actions</th>
+                    <th scope="col">Appointment</th>
                 </tr>
             </thead>
             <tbody>
@@ -89,6 +90,17 @@
                             </form>
                         {% endif %}
                     </td>
+
+                    <td>
+                        {% if appointment.status == 'Active' %}
+                                <a href="https://localhost:8080/{{ appointment['appointmentID'] }}/{{ appointment['pacientID'] }}/{{ appointment['medicID'] }}">
+                                <button id="join" type="submit" class="btn btn-success btn-sm">Call</button>
+                            </a>
+                            
+                            
+                        {% endif %}
+                    </td>
+                    
                 </tr>
                 {% else %}
                     <tr>

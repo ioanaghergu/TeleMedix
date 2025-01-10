@@ -82,6 +82,8 @@ def retrieve_medic_consultations(order, user_id):
     query = """
                 SELECT 
                 [appointmentID], 
+                [Appointment].[pacientID],
+                [Appointment].[medicID],
                 [appointment_date], 
                 [notes], 
                 [username], 
@@ -117,13 +119,17 @@ def get_consultations():
     if current_user.roleid == 2: # Retrieve patient's consultations  
         query = """
                 SELECT 
-                [appointmentID], 
+                [appointmentID],
+                [Appointment].[pacientID],
+                [Appointment].[medicID], 
                 [appointment_date], 
                 [notes], 
                 [username], 
                 [specialization_name]
             FROM 
                 [Appointment]
+            JOIN 
+                [Pacient] ON [Appointment].[pacientID] = [Pacient].[pacientID]
             JOIN 
                 [Medic] ON [Appointment].[medicID] = [Medic].[medicID]
             JOIN 
@@ -155,6 +161,8 @@ def get_consultations():
 
         processed_appointments.append({
             "appointmentID": appointment.appointmentID,
+            "pacientID":appointment.pacientID,
+            "medicID": appointment.medicID,
             "appointment_date": appointment.appointment_date,
             "notes": appointment.notes,
             "username": appointment.username,
