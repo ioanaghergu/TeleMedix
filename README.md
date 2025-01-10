@@ -15,29 +15,32 @@ Sistemul utilizează **Patternul Strategy** pentru gestionarea componentei de in
 
 ### Diagrame 📊
 
-1. **Activity Diagram - Appointment Management**:
-   ![Activity Diagram - Appointment Management](diagrams/Activity%20Diagram%20Appointments%20Management.png)
+1. **Workflow Diagram**:
+   ![Workflow Diagram - Diagrama Generala](diagrams/Diagrama%20Workflow.jpg)
 
-2. **Authentication Sequence Diagram**:
-   ![Authentication Sequence Diagram](diagrams/Authentication%20Sequence%20Diagram.png)
+2. **Activity Diagram - Appointment Management**:
+   ![Activity Diagram - Appointment Management (Melania Ion)](diagrams/Activity%20Diagram%20Appointments%20Management.png)
 
-3. **Deployment Diagram**:
-   ![Deployment Diagram](diagrams/Deployment%20Diagram.pdf)
+3. **Authentication Sequence Diagram**:
+   ![Authentication Sequence Diagram (Ioana Ghergu)](diagrams/Authentication%20Sequence%20Diagram.png)
 
 4. **Database Diagram**:
-   ![Database Diagram](diagrams/Diagrama%20baza%20de%20date.jpg)
+   ![Database Diagram (Balc Larisa)](diagrams/Diagrama%20baza%20de%20date.jpg)
 
-5. **Class Diagram**:
-   ![Class Diagram](diagrams/Diagrama%20clase%20(temporara).jpg)
+5. **Use Case Diagram**:
+   ![Use Case Diagram (Balc Larisa)](diagrams/Diagrama%20UML%20UseCase.jpg)
 
-6. **Consultation State Diagram**:
-   ![Consultation State Diagram](diagrams/Diagrama%20stari%20consultatie%20(temporara).jpg)
+6. **Class Diagram**:
+   ![Class Diagram (Bianca Andrei)](diagrams/Diagrama%20clase%20(temporara).jpg)
 
-7. **Workflow Diagram**:
-   ![Workflow Diagram](diagrams/Diagrama%20Workflow.jpg)
+7. **Consultation State Diagram**:
+   ![Consultation State Diagram (Bianca Andrei)](diagrams/Diagrama%20stari%20consultatie%20(temporara).jpg)
 
 8. **Package Diagram**:
-   ![Package Diagram](diagrams/Package%20Diagram.pdf)
+   ![Package Diagram (Andrei Horceag)](diagrams/Package%20Diagram.pdf)
+
+9. **Deployment Diagram**:
+   ![Deployment Diagram (Andrei Horceag)](diagrams/Deployment%20Diagram.pdf)
 
 ## Instalare 🛠️
 
