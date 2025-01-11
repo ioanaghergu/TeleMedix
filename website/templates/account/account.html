@@ -22,12 +22,77 @@
           <h3 class="profile-name text-dark mt-2">{{ current_user.username }}</h3>
           <p class="text-muted">Email: {{ current_user.email }}</p>
           <p class="text-muted">Birthday: {{ current_user.birth_date }}</p>
+          <p class="text-muted">Timetable:</p>
+          <div>
+          <table class="table table-bordered text-center" style="margin-left: 0px; font-size: small;">
+            <thead>
+              <tr>
+                <th scope="col">Monday</th>
+                <th scope="col">Tuesday</th>
+                <th scope="col">Wednesday</th>
+                <th scope="col">Thursday</th>
+                <th scope="col">Friday</th>
+                <th scope="col">Saturday</th>
+                <th scope="col">Sunday</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{% if timetable.mon != '' and timetable != None %}
+                    {{ timetable.mon }}
+                    {% else %}
+                    Unavailable
+                    {% endif %}
+                </td>
+                <td>{% if timetable.tue != '' and timetable != None %}
+                    {{ timetable.tue }}
+                    {% else %}
+                    Unavailable
+                    {% endif %}
+                </td>
+                <td>{% if timetable.wed != '' and timetable != None %}
+                    {{ timetable.wed }}
+                    {% else %}
+                    Unavailable
+                    {% endif %}
+                </td>
+                <td>{% if timetable.thu != '' and timetable != None %}
+                    {{ timetable.thu }}
+                    {% else %}
+                    Unavailable
+                    {% endif %}
+                </td>
+                <td>{% if timetable.fri != '' and timetable != None %}
+                    {{ timetable.fri }}
+                    {% else %}
+                    Unavailable
+                    {% endif %}
+                </td>
+                <td>{% if timetable.sat != '' and timetable != None %}
+                    {{ timetable.sat }}
+                    {% else %}
+                    Unavailable
+                    {% endif %}
+                </td>
+                <td>{% if timetable.sun != '' and timetable != None %}
+                    {{ timetable.sun }}
+                    {% else %}
+                    Unavailable
+                    {% endif %}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <!-- Action Buttons -->
       <div class="d-flex justify-content-between mt-3">
           <a href="{{ url_for('account.edit_account') }}" class="btn btn-success px-3">Edit Account</a>
           <a href="{{ url_for('account.confirm_delete') }}" class="btn btn-danger px-3">Delete Account</a>
+          {% if current_user.roleid == 3 %}
+          <a href="/update-timetable" class="btn btn-primary px-3">Set timetable</a>
+          {% endif %}
       </div>
   </div>
 

@@ -1,0 +1,85 @@
+{% extends "_baseTemplate.html" %}
+
+{% block title %}Doctor Profile{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/account/account.css') }}">
+
+<div class="account-page container py-4">
+
+  <div class="profile-card shadow-sm mt-3 p-3 rounded bg-white">
+      <div class="text-center">
+          <div class="profile-icon mb-2">
+              <i class="fa fa-user-circle fa-9x text-primary"></i>
+          </div>
+          <!-- User Info -->
+          <h3 class="profile-name text-dark mt-2">{{ doctor.username }}</h3>
+          <p class="text-muted">Specialization: {{ doctor.specialization_name }}</p>
+          <!-- Time table -->
+          <p class="text-muted">Timetable <i>(Please note that the timetable is only indicative. See the availability intervals when requesting a consultation)</i>:</p>
+          <div>
+          <table class="table table-bordered text-center" style="margin-left: 0px; font-size: small;">
+            <thead>
+              <tr>
+                <th scope="col">Monday</th>
+                <th scope="col">Tuesday</th>
+                <th scope="col">Wednesday</th>
+                <th scope="col">Thursday</th>
+                <th scope="col">Friday</th>
+                <th scope="col">Saturday</th>
+                <th scope="col">Sunday</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{% if timetable.mon != '' and timetable != None %}
+                    {{ timetable.mon }}
+                    {% else %}
+                    Unavailable
+                    {% endif %}
+                </td>
+                <td>{% if timetable.tue != '' and timetable != None %}
+                    {{ timetable.tue }}
+                    {% else %}
+                    Unavailable
+                    {% endif %}
+                </td>
+                <td>{% if timetable.wed != '' and timetable != None %}
+                    {{ timetable.wed }}
+                    {% else %}
+                    Unavailable
+                    {% endif %}
+                </td>
+                <td>{% if timetable.thu != '' and timetable != None %}
+                    {{ timetable.thu }}
+                    {% else %}
+                    Unavailable
+                    {% endif %}
+                </td>
+                <td>{% if timetable.fri != '' and timetable != None %}
+                    {{ timetable.fri }}
+                    {% else %}
+                    Unavailable
+                    {% endif %}
+                </td>
+                <td>{% if timetable.sat != '' and timetable != None %}
+                    {{ timetable.sat }}
+                    {% else %}
+                    Unavailable
+                    {% endif %}
+                </td>
+                <td>{% if timetable.sun != '' and timetable != None %}
+                    {{ timetable.sun }}
+                    {% else %}
+                    Unavailable
+                    {% endif %}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+  </div>
+</div>
+{% endblock %}

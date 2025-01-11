@@ -12,7 +12,10 @@ def home():
 @views.route('/account')
 @login_required
 def account():
-    return render_template("account/account.html", user=current_user, time=time)
+    conn = current_app.db
+    cursor = conn.cursor()
+    timetable = cursor.execute('SELECT [mon], [tue], [wed], [thu], [fri], [sat], [sun] FROM [TimeTable] WHERE [medicID] = ?', current_user.userid).fetchone()
+    return render_template("account/account.html", user=current_user, time=time, timetable=timetable)
 
 @views.route('/appointments')
 @login_required
