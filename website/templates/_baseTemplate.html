@@ -16,6 +16,8 @@
       crossorigin="anonymous"
     />
 
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home-notifications.css') }}">
+
     <title>{% block title %}Home{% endblock %}</title>
 
   </head>
@@ -31,18 +33,19 @@
         <span class="navbar-toggler-icon"></span>
       </button>
 
-      <div class="collapse navbar-collapse" id="navbar">
-        <div class="navbar-nav">
+      <div class="navbar-nav w-100">
+        <div class="d-flex flex-grow-1">
           {% if current_user.is_authenticated %}
             <a class="nav-item nav-link" id="home" href="/">Home</a>
-            <a class="nav-item nav-link" id="diagnosis" href="/diagnosis">Generate diagnosis</a>
             <a class="nav-item nav-link" id="logout" href="/logout">Logout</a>
             <a class="nav-item nav-link" id="account" href="{{ url_for('views.account') }}">My Account</a>
+            <a class="nav-item nav-link" id="diagnosis" href="/diagnosis">Generate diagnosis</a>
             <a class="nav-item nav-link" id="appointments" href="{{ url_for('consultation.get_consultations') }}">Manage Appointments</a>
-            
+        </div>
+        <div class="ml-auto">
             <div class="dropdown">
               <button 
-                  class="btn btn-secondary dropdown-toggle" 
+                  class="btn btn-secondary dropdown-toggle notification-button" 
                   type="button" 
                   id="notificationsBell" 
                   data-toggle="dropdown" 
@@ -54,9 +57,10 @@
               <div class="dropdown-menu" aria-labelledby="notificationsBell">
                   <a href="{{ url_for('notifications.get_notifications') }}" class="dropdown-item">View All Notifications</a>
               </div>
+            </div>
           </div>
-          
-          
+        </div>
+             
           {% else %}
             <a class="nav-item nav-link" id="login" href="/login">Login</a>
             <a class="nav-item nav-link" id="signUp" href="/sign-up">Sign Up</a>

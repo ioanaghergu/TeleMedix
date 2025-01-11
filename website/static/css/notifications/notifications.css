@@ -1,0 +1,25 @@
+/* Notifications List Styling */
+.list-group-item {
+    background-color: #f9f9f9; 
+    border: 1px solid #ddd; 
+    border-radius: 5px; 
+}
+
+/* Buttons Styling */
+.btn-success {
+    background-color: #28a745; 
+    border-color: #28a745;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+.font-weight-bold {
+    font-weight: 600; 
+}
+
+.text-muted {
+    font-size: 0.85rem; 
+}
