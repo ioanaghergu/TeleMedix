@@ -1,5 +1,5 @@
-from flask import Flask
-from flask_login import LoginManager
+from flask import Flask, current_app
+from flask_login import LoginManager, current_user
 import pyodbc
 from .models import User
 
@@ -23,6 +23,7 @@ def create_app():
     from .generate_diagnosis import diagnosis
     from .doctors import doctor
     from .consultations import consultation
+    from .notifications import notifications
 
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
@@ -30,6 +31,7 @@ def create_app():
     app.register_blueprint(diagnosis, url_prefix='/')
     app.register_blueprint(doctor, url_prefix='/')
     app.register_blueprint(consultation, url_prefix='/')
+    app.register_blueprint(notifications, url_prefix='/')
 
     app.db = get_db_connection() 
        
@@ -53,6 +55,18 @@ def create_app():
 
         return None
 
+    @app.context_processor
+    def inject_unread_count():
+        if current_user.is_authenticated:
+            conn = current_app.db
+            cursor = conn.cursor()
+
+            # Count unread notifications for the logged-in user
+            unread_count = cursor.execute(
+                "SELECT COUNT(*) FROM Notification WHERE user_id = ? AND [read] = 0",
+                (current_user.userid,)).fetchone()[0]
+            return {'unread_count': unread_count}
+        return {'unread_count': 0}  
     return app
 
 

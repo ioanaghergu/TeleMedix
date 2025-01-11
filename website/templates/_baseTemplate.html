@@ -39,6 +39,24 @@
             <a class="nav-item nav-link" id="logout" href="/logout">Logout</a>
             <a class="nav-item nav-link" id="account" href="{{ url_for('views.account') }}">My Account</a>
             <a class="nav-item nav-link" id="appointments" href="{{ url_for('consultation.get_consultations') }}">Manage Appointments</a>
+            
+            <div class="dropdown">
+              <button 
+                  class="btn btn-secondary dropdown-toggle" 
+                  type="button" 
+                  id="notificationsBell" 
+                  data-toggle="dropdown" 
+                  aria-haspopup="true" 
+                  aria-expanded="false"
+              >
+                  Notifications <span id="notification-count" class="badge badge-light">{{ unread_count }}</span>
+              </button>
+              <div class="dropdown-menu" aria-labelledby="notificationsBell">
+                  <a href="{{ url_for('notifications.get_notifications') }}" class="dropdown-item">View All Notifications</a>
+              </div>
+          </div>
+          
+          
           {% else %}
             <a class="nav-item nav-link" id="login" href="/login">Login</a>
             <a class="nav-item nav-link" id="signUp" href="/sign-up">Sign Up</a>
