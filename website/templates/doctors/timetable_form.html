@@ -1,0 +1,77 @@
+{% extends "_baseTemplate.html" %}
+{% block title %}My Timetable{% endblock %}
+
+{% block content %}
+<div class="container text-center" style="margin-top: 30px;">
+    <p>
+        For deleting an interval, please leave the field empty.<br>
+        For adding an interval, please fill in the field with the desired interval.<br>
+        The interval format is: HH:MM - HH:MM.
+    </p>
+</div>
+<div class="container">
+    <div class="row" style="margin-top: 30px;">
+        <div class="col"></div>
+        <div class="col-6">
+            <form method="POST">
+                <div class="form-group row mb-3">
+                    <label for="mon" class="col-sm-2 col-form-label">Monday:</label>
+                    <div class="col-sm-10">
+                        <input type="text" id="mon" name="mon" class="form-control" value="{{ timetable.mon }}">
+                    </div>
+                </div>
+            
+                <div class="form-group row mb-3">
+                    <label for="tue" class="col-sm-2 col-form-label">Tuesday:</label>
+                    <div class="col-sm-10">
+                        <input type="text" id="tue" name="tue" class="form-control" value="{{ timetable.tue }}">
+                    </div>
+                </div>
+            
+                <div class="form-group row mb-3">
+                    <label for="wed" class="col-sm-2 col-form-label">Wednesday:</label>
+                    <div class="col-sm-10">
+                        <input type="text" id="wed" name="wed" class="form-control" value="{{ timetable.wed }}">
+                    </div>
+                </div>
+            
+                <div class="form-group row mb-3">
+                    <label for="thu" class="col-sm-2 col-form-label">Thursday:</label>
+                    <div class="col-sm-10">
+                        <input type="text" id="thu" name="thu" class="form-control" value="{{ timetable.thu }}">
+                    </div>
+                </div>
+            
+                <div class="form-group row mb-3">
+                    <label for="fri" class="col-sm-2 col-form-label">Friday:</label>
+                    <div class="col-sm-10">
+                        <input type="text" id="fri" name="fri" class="form-control" value="{{ timetable.fri }}">
+                    </div>
+                </div>
+            
+                <div class="form-group row mb-3">
+                    <label for="sat" class="col-sm-2 col-form-label">Saturday:</label>
+                    <div class="col-sm-10">
+                        <input type="text" id="sat" name="sat" class="form-control" value="{{ timetable.sat }}">
+                    </div>
+                </div>
+            
+                <div class="form-group row mb-3">
+                    <label for="sun" class="col-sm-2 col-form-label">Sunday:</label>
+                    <div class="col-sm-10">
+                        <input type="text" id="sun" name="sun" class="form-control" value="{{ timetable.sun }}">
+                    </div>
+                </div>
+            
+                <div class="form-group row">
+                    <div class="col-sm-10 offset-sm-2">
+                        <button type="submit" class="btn btn-primary">Save timetable</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col"></div>
+    </div>
+</div>
+
+{% endblock %}
