@@ -1,0 +1,55 @@
+{% extends "_baseTemplate.html" %}
+{% block title %}Availability slots{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 30px;">
+    <div class="row" style="margin-top: 30px;">
+        <div class="col"></div>
+        <div class="col-6">
+    <ul>
+        <li>Choose the date, the start time of your first availability slot and the number of consecutive consultations.</li>
+        <li>A slot is automatically created for each consecutive consultation (each one has 30 minutes allocated).</li>
+        <li>If you want to create a break between two consecutive consultations, please create a new availability slot with the same date.</li>
+        <li>Please note that once sent, the availability slots cannot be modified or deleted.</li>
+        <li>The consultations slots must respect the working hours (08:00-20:00).</li>
+    </ul>
+        </div>
+        <div class="col"></div>
+</div>
+<div class="container">
+    <div class="row" style="margin-top: 30px;">
+        <div class="col"></div>
+        <div class="col-6">
+            <form method="POST">
+                <div class="form-group row mb-3">
+                    <label for="availabilityDate" class="col-sm-2 col-form-label">Date:</label>
+                    <div class="col-sm-10">
+                        <input type="date" id="availabilityDate" name="availabilityDate" class="form-control" required>
+                    </div>
+                    <script>console.log(document.getElementById('availabilityDate').value)</script>
+                </div>
+                <div class="form-group row mb-3">
+                    <label for="availabilityStartSlot" class="col-sm-2 col-form-label">Start slot:</label>
+                    <div class="col-sm-10">
+                        <input type="time" id="availabilityStartSlot" name="availabilityStartSlot" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                    <label for="consecutiveConsultations" class="col-sm-2 col-form-label">Consecutive consultations:</label>
+                    <div class="col-sm-10">
+                        <input type="number" id="consecutiveConsultations" name="consecutiveConsultations" class="form-control" min="1">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-10 offset-sm-2">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col"></div>
+    </div>
+</div>
+
+{% endblock %}
