@@ -311,3 +311,23 @@ def edit_notes(appointment_id):
 
     flash("Notes updated successfully.", category="success")
     return redirect(url_for('consultation.get_consultations'))
+
+@consultation.route('/medical-file/<int:pacient_id>', methods=['GET'])
+@login_required
+def view_medical_file(pacient_id):
+    conn = current_app.db
+    cursor = conn.cursor()
+
+    pacient = cursor.execute(
+        "SELECT * FROM [User] WHERE [userID] = ?", 
+        (pacient_id)).fetchone()
+
+    medical_file = cursor.execute(
+        "SELECT [recordID] FROM [MedicalRecord] WHERE [pacientID] = ?", 
+        (pacient_id)).fetchone()
+    
+    diagnostics = cursor.execute(
+        "SELECT * FROM [Diagnosis] WHERE [recordID] = ?", 
+        (medical_file.recordID)).fetchall()
+        
+    return render_template("medical_files/medical_file.html", diagnostics=diagnostics, pacient=pacient)

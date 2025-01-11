@@ -49,6 +49,9 @@
                     <th scope="col">Notes</th>
                     <th scope="col">Status</th>
                     <th scope="col">Actions</th>
+                    {% if current_user.roleid == 3 %}
+                        <th scope="col">Medical File</th>
+                    {% endif %}
                 </tr>
             </thead>
             <tbody>
@@ -122,6 +125,15 @@
                             </form>
                         {% endif %}
                     </td>
+
+                    <!-- Medical File -->
+                    {% if current_user.roleid == 3 %}
+                    <td>
+                        <form method="GET" action="{{ url_for('consultation.view_medical_file', pacient_id=appointment['pacientID']) }}" class="mb-2">
+                            <button type="submit" class="btn btn-info btn-sm">View</button>
+                        </form>
+                    </td>
+                    {% endif %}
                 </tr>
                 {% else %}
                     <tr>
