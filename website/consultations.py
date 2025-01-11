@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, current_app
 from flask_login import login_required, current_user
 from datetime import datetime
+from .notifications import create_consultation_notification, create_cancellation_notification
 
 consultation = Blueprint('consultation', __name__)
 
@@ -42,6 +43,21 @@ def add_consultation():
             cursor.execute("INSERT INTO [Appointment] ([pacientID], [medicID], [appointment_date], [notes], [serviceID]) VALUES (?, ?, ?, ?, ?)", current_user.userid, doctorId, appointment_datetime, notes, 1)
             conn.commit()
 
+            # Add Notification
+            consultation_id = cursor.execute(
+                """
+                SELECT TOP 1 [appointmentID] 
+                FROM [Appointment] 
+                WHERE [pacientID] = ? AND [medicID] = ? AND [appointment_date] = ? 
+                ORDER BY [appointmentID] DESC
+                """,
+                (current_user.userid, doctorId, appointment_datetime)).fetchone()[0]
+            create_consultation_notification(
+                medic_id=doctorId,
+                consultation_id=consultation_id,
+                patient_name=current_user.username,
+                appointment_datetime=appointment_datetime)
+            
             flash("Your consultation form was completed successfully", category="success")
             return redirect(url_for('views.home'))
         else: 
@@ -188,7 +204,7 @@ def cancel_consultation(appointment_id):
 
     # Verify the consultation belongs to the current user and is in the future
     consultation = cursor.execute(
-         "SELECT [appointment_date], [notes] FROM [Appointment] WHERE [appointmentID] = ? AND ([pacientID] = ? OR [medicID] = ?)", 
+         "SELECT [appointment_date], [notes], [medicID], [pacientID], [appointmentID] FROM [Appointment] WHERE [appointmentID] = ? AND ([pacientID] = ? OR [medicID] = ?)", 
         (appointment_id, current_user.userid, current_user.userid)).fetchone()
 
     if consultation:
@@ -204,13 +220,31 @@ def cancel_consultation(appointment_id):
         flash("Cannot cancel past consultations.", category="error")
         return redirect(url_for('consultation.get_consultations'))
 
+    #Add Notification
+    medic_id = consultation['medicID']
+    patient_id = consultation['pacientID']
+    consultation_id = consultation['appointmentID']
+    
+    if current_user.userid == medic_id:
+        recipient_id = patient_id
+        canceler_name = f"Doctor {current_user.username}"
+    elif current_user.userid == patient_id:
+        recipient_id = medic_id
+        canceler_name = f"Patient {current_user.username}"
+    create_cancellation_notification(
+        recipient_id=recipient_id,
+        consultation_id=consultation_id,
+        canceler_name=canceler_name,
+        cancellation_reason=cancellation_reason,
+        consultation_date = appointment_date)
+
     # Append cancellation reason to notes  
     updated_notes = f"{notes}\n\nCancellation Reason: {cancellation_reason}" if cancellation_reason else f"{notes}\n\nCancellation Reason: -"
     cursor.execute(
         "UPDATE [Appointment] SET [notes] = ? WHERE [appointmentID] = ?", 
         (updated_notes, appointment_id))
     conn.commit()
-
+    
     flash("Consultation cancelled successfully.", category="success")
     return redirect(url_for('consultation.get_consultations'))
 
