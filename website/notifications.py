@@ -33,10 +33,11 @@ def generate_one_hour_notifications():
                 (consultation.appointmentID, user_id)).fetchone()
 
             if not existing_notification:
+                formatted_datetime = consultation.appointment_date.strftime('%Y-%m-%d %H:%M')
                 if user_id == consultation_pacientID:
-                    message = f"Reminder: Your consultation is scheduled at {consultation.appointment_date}."
+                    message = f"Reminder: Your consultation is scheduled at {formatted_datetime}."
                 else:
-                    message = f"Reminder: You have a consultation with a patient at {consultation.appointment_date}."
+                    message = f"Reminder: You have a consultation with a patient at {formatted_datetime}."
 
                 cursor.execute(
                     """
@@ -44,6 +45,42 @@ def generate_one_hour_notifications():
                     VALUES (?, ?, ?, 'one_hour')
                     """,
                     (user_id, consultation.appointmentID, message))
+    conn.commit()
+
+
+def create_consultation_notification(medic_id, consultation_id, patient_name, appointment_datetime):
+    
+    conn = current_app.db
+    cursor = conn.cursor()
+
+    formatted_datetime = appointment_datetime.strftime('%Y-%m-%d %H:%M')
+    message = f"New consultation scheduled by {patient_name} for {formatted_datetime}."
+
+    cursor.execute(
+        """
+        INSERT INTO Notification (user_id, consultation_id, message, type)
+        VALUES (?, ?, ?, 'created')
+        """,
+        (medic_id, consultation_id, message))
+    conn.commit()
+
+def create_cancellation_notification(recipient_id, consultation_id, canceler_name, consultation_date, cancellation_reason=None):
+
+    conn = current_app.db
+    cursor = conn.cursor()
+
+    formatted_datetime = consultation_date.strftime('%Y-%m-%d %H:%M')
+    message = f"{canceler_name} cancelled the consultation at {formatted_datetime}. "
+    if cancellation_reason:
+        message += f" Reason: {cancellation_reason}"
+
+    cursor.execute(
+        """
+        INSERT INTO Notification (user_id, consultation_id, message, type)
+        VALUES (?, ?, ?, 'canceled')
+        """,
+        (recipient_id, consultation_id, message)
+    )
     conn.commit()
 
 @notifications.route('/notifications', methods=['GET'])
@@ -101,4 +138,3 @@ def delete_notification(notification_id):
 
     flash("Notification deleted.", category="success")
     return redirect(url_for('notifications.get_notifications'))
-
