@@ -1,7 +1,6 @@
 const fs = require('fs');
 const https = require('https'); //module for creating a secure HTTPS server
 const express = require('express');
-const session = require('express-session');
 const socketio = require('socket.io');
 
 
@@ -16,14 +15,6 @@ const cert = fs.readFileSync('cert.crt');
 
 //create https server
 const server = https.createServer({key, cert}, app);
-
-app.use(session({
-    secret: 'dfscdj',
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: true } 
-  }));
-
 
 //enable real-time communication between clients by
 //binding socket.io to our server, configuring the routes and permitted HTTP methods
@@ -42,25 +33,13 @@ const io = socketio(server, {
 
 server.listen(8080);
 
-app.get('/:appointmentID/:pacientID/:medicID', (req, res) => {
+app.get('/:appointmentID/:username', (req, res) => {
     const appointmentID = req.params.appointmentID;
-    const pacientID = req.params.pacientID;
-    const medicID = req.params.medicID;
-
-   req.session.appointmentID=appointmentID;
-   req.session.pacientID=pacientID;
-   req.session.medicID=medicID;
-
-    console.log('Appointment ID:', appointmentID);
-    console.log('Patient ID:', pacientID);
-    console.log('Doctor ID:', medicID);
-
-    res.redirect('https://localhost:8080');
-});
-
-app.get('/get-session-data', (req, res) => {
-    const { appointmentID, pacientID, medicID } = req.session;
-    res.json({ appointmentID, pacientID, medicID });
+    const username = req.params.username;
+ 
+    const redirectURL = `https://localhost:8080/?appointmentID=${appointmentID}&username=${username}`;
+ 
+    res.redirect(redirectURL); 
 });
 
 
@@ -72,15 +51,30 @@ io.on('connection', (socket) => {
     console.log("Server: a client has connected");
 
     const username = socket.handshake.auth.username;
+    const appointmentId = socket.handshake.auth.appointmentId;
+
+    console.log("server", username)
+    console.log("server", appointmentId)
     
     connectedSockets.push({
         socketId: socket.id,
-        username: username
+        username: username,
+        appointment_id: appointmentId
     });
 
-    if(offers.length)
+    if(!appointmentId)
     {
-        socket.emit('availableOffers', offers);
+        console.log("Disconnect client");
+        socket.disconnect();
+        return;
+    }
+
+    const offersToSend = offers.filter(o => o.offererAppointmentId === appointmentId)
+    console.log(offersToSend);
+
+    if(offersToSend.length)
+    {
+        socket.emit('availableOffers', offersToSend);
     }
 
     socket.on('newOffer', newOffer => {
@@ -88,12 +82,14 @@ io.on('connection', (socket) => {
             offererUsername: username,
             offer: newOffer,
             offererIceCandidates: [],
+            offererAppointmentId: appointmentId,
             answererUsername: null,
             answer: null,
-            answererIceCandidates: []
+            answererIceCandidates: [],
+            answererAppointmentId:null
         })
 
-        socket.broadcast.emit('offerAwaiting', offers.slice(-1));
+        socket.broadcast.emit('offerAwaiting', offersToSend.slice(-1));
     })
 
     socket.on('sendIceCandidateToServer', iceCandidateObj => {
@@ -159,9 +155,15 @@ io.on('connection', (socket) => {
         const updatedOffer = offers.find(o => o.offererUsername === offer.offererUsername);
         updatedOffer.answer = offer.answer;
         updatedOffer.answererUsername=username;
+        updatedOffer.answererAppointmentId=appointmentId;
         socket.to(offererSocketId).emit('answerResponse', updatedOffer);
     })
 
+    socket.on('hangup', (appointmentId) => {
 
+        const socketToSendTo = connectedSockets.find(s => s.appointment_id === appointmentId);
+        const socketToSentToId = socketToSendTo.socketId;
+        socket.to(socketToSentToId).emit('callEnded');
+    })
 })
 

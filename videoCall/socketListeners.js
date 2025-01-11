@@ -16,6 +16,10 @@ socket.on('answerResponse', offer => {
     addAnswer(offer);
 })
 
+socket.on('callEnded', () => {
+    endCall();
+})
+
 
 function createOffers(offers) {
     const answerEl = document.querySelector('#answer');

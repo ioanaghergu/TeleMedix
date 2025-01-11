@@ -93,7 +93,7 @@
 
                     <td>
                         {% if appointment.status == 'Active' %}
-                                <a href="https://localhost:8080/{{ appointment['appointmentID'] }}/{{ appointment['pacientID'] }}/{{ appointment['medicID'] }}">
+                                <a href="https://localhost:8080/{{ appointment['appointmentID'] }}/{{ current_user.username }}">
                                 <button id="join" type="submit" class="btn btn-success btn-sm">Call</button>
                             </a>
                             

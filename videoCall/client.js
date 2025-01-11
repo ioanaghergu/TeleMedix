@@ -1,12 +1,21 @@
-const username = "User-" + Math.floor(Math.random() * 1000);
+const urlParams = new URLSearchParams(window.location.search);
+
+const username=urlParams.get('username');;
+const appointmentId=urlParams.get('appointmentID');
+
+console.log("Username", username);
+console.log("Appointment", appointmentId);
+
 document.querySelector('#username').innerHTML = username;
 
+
 //for testing on another device on the same network
-//const socket = io.connect('https://LOCAL-IP:8080', 
+//const socket = io.connect('https://LOCAL-IP:8080',
 const socket = io.connect('https://localhost:8080',
     {
         auth: {
-            username
+            username,
+            appointmentId
         }
     }
 );
@@ -18,6 +27,7 @@ let localStream;
 let remoteStream;
 let connection;
 let whoOffered = false; //true for local client, false for remote client
+let status = "Attended";
 
 let connConfiguration = {
     iceServers: [
@@ -32,6 +42,8 @@ let connConfiguration = {
 
 const join = async e => {
     console.log("client joined");
+    console.log(username);
+    console.log(appointmentId);
 
     await fetchUserMedia();
     console.log("got user media successfully");
@@ -95,6 +107,7 @@ const createConnection = (offerObj) => {
                 socket.emit('sendIceCandidateToServer', {
                     iceCandidate: event.candidate,
                     iceUsername: username,
+                    //appointmentId: appointmentId,
                     whoOffered
                 });
             }
@@ -155,24 +168,42 @@ const addAnswer = async(offer) => {
     await connection.setRemoteDescription(offer.answer);
 }
 
+function hangup() {
+    leaveCall();
+    socket.emit('hangup', appointmentId);
+    window.location.href=`http://127.0.0.1:5000/my-consultations?appointment_id=${appointmentId}&status_appointment=${status}`;
+}
+
+function endCall() {
+    leaveCall();
+    console.log("call ended");
+    window.location.href=`http://127.0.0.1:5000/my-consultations?appointment_id=${appointmentId}&status_appointment=${status}`;
+    
+}
+
+function leaveCall() {
+    if(connection)
+    {
+        connection.close();
+        connection = null;
+    }
+
+    if(localStream)
+    {
+        localStream.getTracks().forEach(track => track.stop());
+        localStream = null;
+    }
+
+    if(remoteStream)
+    {
+        remoteStream.getTracks().forEach(track => track.stop());
+        remoteStream = null;
+    }
+
+    localVideoEl.srcObject = null;
+    remoteVideoEl.srcObject = null;
+}
+
 
 document.querySelector('#join').addEventListener('click', join);
-
-fetch('https://localhost:8080/get-session-data')
-  .then(response => response.json())
-  .then(data => {
-
-    sessionStorage.setItem('appointmentID', data.appointmentID);
-    sessionStorage.setItem('pacientID', data.pacientID);
-    sessionStorage.setItem('medicID', data.medicID);
-
-   
-    console.log(sessionStorage.getItem('appointmentID'));
-    console.log(sessionStorage.getItem('pacientID'));
-    console.log(sessionStorage.getItem('medicID'));
-  })
-  .catch(error => {
-    console.error('Error fetching session data:', error);
-  });
-
-
+document.querySelector('#hangup').addEventListener('click', hangup);
