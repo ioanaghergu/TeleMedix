@@ -39,6 +39,9 @@
             <a class="nav-item nav-link" id="logout" href="/logout">Logout</a>
             <a class="nav-item nav-link" id="account" href="{{ url_for('views.account') }}">My Account</a>
             <a class="nav-item nav-link" id="appointments" href="{{ url_for('consultation.get_consultations') }}">Manage Appointments</a>
+            {% if current_user.roleid == 3 %}
+              <a class="nav-item nav-link" id="availabilitySlots" href="{{ url_for('doctor.get_availability_list') }}">Availability</a>
+            {% endif %}
           {% else %}
             <a class="nav-item nav-link" id="login" href="/login">Login</a>
             <a class="nav-item nav-link" id="signUp" href="/sign-up">Sign Up</a>

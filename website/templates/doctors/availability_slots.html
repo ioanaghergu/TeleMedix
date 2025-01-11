@@ -1,0 +1,76 @@
+{% extends "_baseTemplate.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">My Availability Slots</h2>
+
+     <!-- Filtering and Sorting Form -->
+     <form method="GET" action="{{ url_for('doctor.get_availability_list') }}" class="mb-4">
+        <div class="form-row align-items-center">
+            <!-- Status Filter -->
+           <div class="col-auto">
+                <label for="status" class="sr-only">Status</label>
+                <select class="form-control" id="status" name="status">
+                    <option value="" {% if not status_filter %}selected{% endif %}>All</option>
+                    <option value="Free" {% if status_filter == "Free" %}selected{% endif %}>Free</option>
+                    <option value="Booked" {% if status_filter == "Booked" %}selected{% endif %}>Booked</option>
+                </select>
+            </div>
+
+            <!-- Date Order -->
+            <div class="col-auto">
+                <label for="order" class="sr-only">Order</label>
+                <select class="form-control" id="order" name="order">
+                    <option value="asc" {% if order == 'asc' %}selected{% endif %}>Oldest First</option>
+                    <option value="desc" {% if order == 'desc' %}selected{% endif %}>Newest First</option>
+                </select>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">Apply</button>
+            </div>
+        </div>
+    </form> 
+
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Start Time</th>
+                    <th scope="col">End Time</th>
+                    <th scope="col">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for slot in availability_slots %}
+                    <tr>
+                        <td>{{ slot.date }}</td>
+                        <td>{{ '%02d' | format(slot.start_time.time().hour) }}:{{ '%02d' | format(slot.start_time.time().minute) }}</td>  
+                        <td>{{ '%02d' | format(slot.end_time.time().hour) }}:{{ '%02d' | format(slot.end_time.time().minute) }}</td>                      
+                       <!-- Status -->
+                       <td>
+                        <span class="badge 
+                            {% if slot.availability_status == 'FREE' %} badge-success
+                            {% else %} badge-warning
+                            {% endif %}">
+                            {{ slot.availability_status }}
+                        </span>
+                    </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="4" class="text-center">No availability slots found.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="text-center">
+        <a href="{{ url_for('doctor.availability_form') }}" class="btn btn-primary">Add Availability Slot</a>
+    </div>
+</div>
+
+{% endblock %}

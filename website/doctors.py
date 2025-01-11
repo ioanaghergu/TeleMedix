@@ -126,4 +126,20 @@ def availability_form():
                 end_date = start_date + datetime.timedelta(minutes=30)
                 cursor.execute('INSERT INTO [Availability] ([date], [start_time], [end_time], [medicID], [availability_status]) VALUES (?, ?, ?, ?, ?)', datetime.datetime.strptime(date, '%Y-%m-%d'), start_date, end_date, current_user.userid, 'FREE')
                 conn.commit()
+            flash("Availability slots added successfully.", category='success')
+            return render_template("doctors/availability_slots.html", user=current_user)
+
     return render_template("doctors/availability_form.html", user=current_user)
+
+@doctor.route('/availability-list', methods=['GET'])
+@login_required
+def get_availability_list():
+    conn = current_app.db
+    cursor = conn.cursor()
+    status_filter = request.args.get('status')
+    order = request.args.get('order', 'desc')
+    if status_filter:
+        availability_slots = cursor.execute('SELECT [date], [start_time], [end_time], [availability_status] FROM [Availability] WHERE [medicID] = ? AND [availability_status] = ? ORDER BY [date], [start_time] {}'.format('DESC' if order == 'desc' else 'ASC'), current_user.userid, status_filter).fetchall()
+    else:
+        availability_slots = cursor.execute('SELECT [date], [start_time], [end_time], [availability_status] FROM [Availability] WHERE [medicID] = ? ORDER BY [date], [start_time] {}'.format('DESC' if order == 'desc' else 'ASC'), current_user.userid).fetchall()
+    return render_template("doctors/availability_slots.html", availability_slots=availability_slots, user=current_user, status_filter=status_filter, order=order)
