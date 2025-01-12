@@ -26,7 +26,7 @@ def add_consultation():
             
             # Convert appointment_date to a datetime object
             try:
-                appointment_date = datetime.strptime(f'{appointmentDate} {start_time[0].strftime('%H:%M')}', '%Y-%m-%d %H:%M')
+                appointment_date = datetime.strptime(f"{appointmentDate} {start_time[0].strftime('%H:%M')}",'%Y-%m-%d %H:%M')
             except ValueError:
                 flash("Invalid date format", category="error")
                 return redirect(url_for('consultation.add_consultation'))
@@ -51,12 +51,12 @@ def add_consultation():
                 WHERE [pacientID] = ? AND [medicID] = ? AND [appointment_date] = ? 
                 ORDER BY [appointmentID] DESC
                 """,
-                (current_user.userid, doctorId, appointment_datetime)).fetchone()[0]
+                (current_user.userid, doctorId, appointment_date)).fetchone()[0]
             create_consultation_notification(
                 medic_id=doctorId,
                 consultation_id=consultation_id,
                 patient_name=current_user.username,
-                appointment_datetime=appointment_datetime)
+                appointment_datetime=appointment_date)
             
             flash("Your consultation form was completed successfully", category="success")
             return redirect(url_for('views.home'))
