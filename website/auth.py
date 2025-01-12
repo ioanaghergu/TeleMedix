@@ -3,6 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import re
 from flask_login import login_user, login_required, logout_user, current_user
 from .models import User
+from .notifications import generate_one_hour_notifications
 
 
 auth = Blueprint('auth', __name__)
@@ -106,6 +107,7 @@ def login():
                                   roleid=user.roleID)
                 
                 login_user(activeUser, remember=True)
+                generate_one_hour_notifications()
                 return redirect(url_for('views.home'))
             else:
                 flash("Incorrect password, try again", category="error")

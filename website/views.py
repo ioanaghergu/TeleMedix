@@ -1,12 +1,14 @@
 from flask import Blueprint, current_app, render_template
 from flask_login import login_required, current_user
 import time
+from .notifications import generate_one_hour_notifications
 
 views = Blueprint('views', __name__)
 
 @views.route('/')
 @login_required
 def home():
+    generate_one_hour_notifications()
     return render_template("home.html", user=current_user)
 
 @views.route('/account')
