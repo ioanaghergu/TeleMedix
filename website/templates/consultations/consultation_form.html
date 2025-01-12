@@ -45,11 +45,28 @@
     </div>
 
     <div class="form-group row mb-3">
-        <label for="appointmentDatetime" class="col-sm-2 col-form-label">Appointment Date:</label>
+        <label for="appointmentDate" class="col-sm-2 col-form-label">Appointment Date:</label>
         <div class="col-sm-10">
-            <input type="datetime-local" id="appointmentDatetime" name="appointmentDatetime" class="form-control" required>
+            <input type="date" id="appointmentDate" name="appointmentDate" class="form-control" required onchange="filterSlots()">
         </div>
     </div>
+
+    <div class="form-group row mb-3">
+        <label for="slot" class="col-sm-2 col-form-label">Available slot:</label>
+        <div class="col-sm-10">
+            <select id="slot" name="slot" class="form-control" required>
+                <option value="" disabled selected>Select an available slot</option>
+                {% for slot in availability_slots %}
+                    <option value="{{ slot.availabilityID }}">
+                        {{ slot.date }} - {{ '%02d' | format(slot.start_time.time().hour) }}:{{ '%02d' | format(slot.start_time.time().minute) }}
+                    </option>
+                {% else %}
+                    <option value="" disabled>No slots available</option>
+                {% endfor %}
+            </select>            
+        </div>
+    </div>
+
 
     <div class="form-group row mb-3">
         <label for="notes" class="col-sm-2 col-form-label">Notes:</label>
@@ -66,42 +83,51 @@
 </form>
 
 <script>
-    function filterDoctors() {
-        var specializationId = document.getElementById('specialization').value;
-        console.log(specializationId);
+        function filterDoctors() {
+        var specializationSelect = document.getElementById('specialization');
         var doctorSelect = document.getElementById('doctor');
-        var options = doctorSelect.options;
-        var found = false;
+        var selectedSpecialization = specializationSelect.value;
 
-        // Clear previous selection
-        doctorSelect.selectedIndex = 0;
+        // Clear existing options
+        doctorSelect.innerHTML = '<option value="" disabled selected>Select a doctor</option>';
 
-        // Hide all doctors initially
-        for (var i = 0; i < options.length; i++) {
-            options[i].style.display = 'none';
-        }
-
-        // Show doctors that match the selected specialization
-        for (var i = 0; i < options.length; i++) {
-            var option = options[i];
-            if (option.getAttribute('data-specialization') == specializationId) {
-                option.style.display = 'block';
-                found = true;
-            }
-        }
-
-        // If no doctors are found, add "No doctors found" option
-        if (!found) {
-            var noDoctorOption = document.createElement('option');
-            noDoctorOption.value = "";
-            noDoctorOption.disabled = true;
-            noDoctorOption.selected = true;
-            noDoctorOption.text = "No doctors found";
-            doctorSelect.appendChild(noDoctorOption);
-        }
-        console.log(doctorSelect);
+        // Make an AJAX request to get doctors based on the selected specialization
+        fetch(`/get-doctors?specialization_id=${selectedSpecialization}`)
+            .then(response => response.json())
+            .then(data => {
+                data.doctors.forEach(doctor => {
+                    var option = document.createElement('option');
+                    option.value = doctor.medicID;
+                    option.textContent = doctor.username;
+                    doctorSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error fetching doctors:', error));
     }
 
+    function filterSlots() {
+        var doctorSelect = document.getElementById('doctor');
+        var slotSelect = document.getElementById('slot');
+        var appointmentDate = document.getElementById('appointmentDate');
+        var selectedDoctor = doctorSelect.value;
+
+        // Clear existing options
+        slotSelect.innerHTML = '<option value="" disabled selected>Select an available slot</option>';
+
+        // Make an AJAX request to get slots based on the selected doctor
+        fetch(`/get-slots?doctor_id=${selectedDoctor}&appointment_date=${appointmentDate.value}`)
+            .then(response => response.json())
+            .then(data => {
+                data.slots.forEach(slot => {
+                    var option = document.createElement('option');
+                    option.value = slot.availability_id;
+                    option.textContent = `${slot.start_time} - ${slot.end_time}`;
+                    slotSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error fetching slots:', error));
+    }
+    
     // Call filterDoctors() when the page loads to handle default doctor visibility and pre-selection
     window.onload = function() {
         filterDoctors();
