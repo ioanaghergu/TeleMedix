@@ -1,4 +1,4 @@
-from flask import Blueprint, current_app, render_template, request, flash, redirect, url_for
+from flask import Blueprint, current_app, jsonify, render_template, request, flash, redirect, url_for
 from flask_login import current_user, login_required
 import time, datetime
 
@@ -37,9 +37,20 @@ def validate_slots(date, startSlot, consecutiveConsultations):
 def get_doctors():
     conn = current_app.db
     cursor = conn.cursor()
-    doctors = cursor.execute("SELECT [username], [specialization_name], [medicID] FROM [Medic] LEFT JOIN [Specialization] ON [Medic].[specializationID] = [Specialization].[specializationID] INNER JOIN [User] ON [User].[userID] = [Medic].[medicID]").fetchall()
 
+    doctors = cursor.execute("SELECT [username], [specialization_name], [medicID] FROM [Medic] LEFT JOIN [Specialization] ON [Medic].[specializationID] = [Specialization].[specializationID] INNER JOIN [User] ON [User].[userID] = [Medic].[medicID]").fetchall()
+ 
     return render_template("doctors/doctors_list.html", doctors=doctors, user=current_user)
+
+@doctor.route('/get-doctors', methods=['GET'])
+@login_required
+def get_doctors_json():
+    specialization_id = request.args.get('specialization_id')
+    conn = current_app.db
+    cursor = conn.cursor()
+    doctors = cursor.execute("SELECT [username], [specialization_name], [medicID] FROM [Medic] LEFT JOIN [Specialization] ON [Medic].[specializationID] = [Specialization].[specializationID] INNER JOIN [User] ON [User].[userID] = [Medic].[medicID] WHERE [Medic].[specializationID] = ? AND [medicID] <> ?", specialization_id, current_user.userid).fetchall()
+    doctors_list = [{'medicID': doctor.medicID, 'username': doctor.username} for doctor in doctors]
+    return jsonify(doctors=doctors_list)
 
 @doctor.route('/doctor-profile/<int:doctorid>', methods=['GET'])
 @login_required
@@ -143,3 +154,14 @@ def get_availability_list():
     else:
         availability_slots = cursor.execute('SELECT [date], [start_time], [end_time], [availability_status] FROM [Availability] WHERE [medicID] = ? ORDER BY [date], [start_time] {}'.format('DESC' if order == 'desc' else 'ASC'), current_user.userid).fetchall()
     return render_template("doctors/availability_slots.html", availability_slots=availability_slots, user=current_user, status_filter=status_filter, order=order)
+
+@doctor.route('/get-slots', methods=['GET'])
+@login_required
+def get_slots():
+    conn = current_app.db
+    cursor = conn.cursor()
+    doctorid = request.args.get('doctor_id')
+    date = request.args.get('appointment_date')
+    print(doctorid, date)
+    slots = cursor.execute('SELECT [availabilityID], [start_time], [end_time] FROM [Availability] WHERE [medicID] = ? AND [date] = ? AND [availability_status] = \'FREE\'', doctorid, date).fetchall()
+    return jsonify(slots=[{'start_time': slot.start_time, 'end_time': slot.end_time, 'availability_id': slot.availabilityID} for slot in slots])

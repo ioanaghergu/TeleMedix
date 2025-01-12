@@ -15,33 +15,32 @@ def add_consultation():
         if not doctorID and not specializationID:
             specializationId = request.form.get('specialization')
             doctorId = request.form.get('doctor')
-            appointment_datetime = request.form.get('appointmentDatetime')
+            appointmentDate = request.form.get('appointmentDate')
             notes = request.form.get('notes')
-
-            # Convert appointment_datetime to a datetime object
-            try:
-                appointment_datetime = datetime.strptime(appointment_datetime, '%Y-%m-%dT%H:%M')
-            except ValueError:
-                flash("Invalid date and time format", category="error")
-                return redirect(url_for('consultation.add_consultation'))
-
-            if appointment_datetime < datetime.now():
-                flash("The date must be in the future", category="error")
-                return redirect(url_for('consultation.add_consultation'))
-
+            slotid = request.form.get('slot')
             conn = current_app.db
             cursor = conn.cursor()
 
-            existing_appointment = cursor.execute("SELECT * FROM [Appointment] WHERE [medicID] = ? AND [appointment_date] = ?", doctorId, appointment_datetime).fetchone()
-            if existing_appointment:
-                flash("There is already an appointment with this doctor at the same date and time", category="error")
-                return redirect(url_for('consultation.add_consultation'))
+            start_time = cursor.execute("SELECT [start_time] FROM [Availability] WHERE [availabilityID] = ?", int(slotid)).fetchone()
             
-            print(current_user.userid, doctorId, specializationId, appointment_datetime, notes)
+            # Convert appointment_date to a datetime object
+            try:
+                appointment_date = datetime.strptime(f'{appointmentDate} {start_time[0].strftime('%H:%M')}', '%Y-%m-%d %H:%M')
+            except ValueError:
+                flash("Invalid date format", category="error")
+                return redirect(url_for('consultation.add_consultation'))
 
-            cursor.execute("INSERT INTO [Appointment] ([pacientID], [medicID], [appointment_date], [notes], [serviceID]) VALUES (?, ?, ?, ?, ?)", current_user.userid, doctorId, appointment_datetime, notes, 1)
+            if appointment_date < datetime.strptime(datetime.now().strftime('%Y-%m-%d'), '%Y-%m-%d'):
+                flash("The date must be in the future", category="error")
+                return redirect(url_for('consultation.add_consultation'))
+
+            print(current_user.userid, doctorId, specializationId, appointment_date, notes)
+
+            cursor.execute("INSERT INTO [Appointment] ([pacientID], [medicID], [appointment_date], [notes], [serviceID], [availabilityID]) VALUES (?, ?, ?, ?, ?, ?)", current_user.userid, doctorId, appointment_date, notes, 1, int(slotid))
             conn.commit()
 
+            cursor.execute("UPDATE [Availability] SET [availability_status] = 'BOOKED' WHERE [availabilityID] = ?", int(slotid))
+            conn.commit()
             flash("Your consultation form was completed successfully", category="success")
             return redirect(url_for('views.home'))
         else: 
@@ -203,6 +202,11 @@ def cancel_consultation(appointment_id):
     cursor.execute(
         "UPDATE [Appointment] SET [notes] = ? WHERE [appointmentID] = ?", 
         (updated_notes, appointment_id))
+    conn.commit()
+    availability_id = cursor.execute("SELECT [availabilityID] FROM [Appointment] WHERE [appointmentID] = ?", appointment_id).fetchone()
+    cursor.execute("UPDATE [Appointment] SET [availabilityID] = NULL WHERE [appointmentID] = ?", appointment_id)
+    conn.commit()
+    cursor.execute("UPDATE [Availability] SET [availability_status] = 'FREE' WHERE [availabilityID] = ?", availability_id)
     conn.commit()
 
     flash("Consultation cancelled successfully.", category="success")
