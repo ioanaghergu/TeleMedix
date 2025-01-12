@@ -31,7 +31,7 @@ Sistemul utilizează **Patternul Strategy** pentru gestionarea componentei de in
    ![Use Case Diagram](diagrams/Diagrama%20UML%20UseCase.jpg)
 
 6. **Class Diagram** - Bianca Andrei:
-   ![Class Diagram](diagrams/Diagrama%20clase%20(temporara).jpg)
+   ![Class Diagram](diagrams/Diagrama%20clase.jpg)
 
 7. **Consultation State Diagram** - Bianca Andrei:
    ![Consultation State Diagram](diagrams/Diagrama%20stari%20consultatie%20(temporara).jpg)
