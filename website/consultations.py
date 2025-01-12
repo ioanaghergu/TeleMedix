@@ -327,7 +327,7 @@ def view_medical_file(pacient_id):
         (pacient_id)).fetchone()
     
     diagnostics = cursor.execute(
-        "SELECT * FROM [Diagnosis] WHERE [recordID] = ?", 
+        "SELECT symptoms, diagnosis, treatment, username, specialization_name FROM [Diagnosis] d LEFT JOIN [User] u on u.userID = d.medicID LEFT JOIN Medic m on d.medicID = m.medicID LEFT JOIN Specialization s on s.specializationID = m.specializationID WHERE [recordID] = ?", 
         (medical_file.recordID)).fetchall()
         
     return render_template("medical_files/medical_file.html", diagnostics=diagnostics, pacient=pacient)

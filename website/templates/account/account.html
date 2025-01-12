@@ -89,10 +89,16 @@
       <!-- Action Buttons -->
       <div class="d-flex justify-content-between mt-3">
           <a href="{{ url_for('account.edit_account') }}" class="btn btn-success px-3">Edit Account</a>
-          <a href="{{ url_for('account.confirm_delete') }}" class="btn btn-danger px-3">Delete Account</a>
+          
+          {% if current_user.roleid == 2 %}
+          <a href="{{ url_for('consultation.view_medical_file', pacient_id=current_user.userid) }}" class="btn btn-primary px-3">View Medical File</a>
+          {% endif %}
+
           {% if current_user.roleid == 3 %}
           <a href="/update-timetable" class="btn btn-primary px-3">Set timetable</a>
           {% endif %}
+
+          <a href="{{ url_for('account.confirm_delete') }}" class="btn btn-danger px-3">Delete Account</a>
       </div>
   </div>
 
