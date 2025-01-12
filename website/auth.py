@@ -60,6 +60,11 @@ def sign_up():
             conn.commit()
 
             newUser = cursor.execute("SELECT * FROM [User] WHERE email = ?", email).fetchone()
+            
+            if(newUser.roleID == 2): # Pacient
+                cursor.execute("INSERT INTO [MedicalRecord] VALUES (?)", newUser.userID)
+                conn.commit()
+
             activeUser = User(userid=newUser.userID,
                               email=newUser.email,
                               password=newUser.password,

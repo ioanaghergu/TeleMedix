@@ -43,6 +43,19 @@ body {
     margin-bottom: 15px;
 }
 
+.profile-icon-small {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 8px;
+}
+
+.profile-icon-small i {
+    font-size: 2rem; 
+    color: #007bff; 
+    margin-bottom: 15px;
+}
+
 .profile-name {
     font-size: 1.8rem; 
     font-weight: bold;
