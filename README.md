@@ -34,7 +34,7 @@ Sistemul utilizează **Patternul Strategy** pentru gestionarea componentei de in
    ![Class Diagram](diagrams/Diagrama%20clase.jpg)
 
 7. **Consultation State Diagram** - Bianca Andrei:
-   ![Consultation State Diagram](diagrams/Diagrama%20stari%20consultatie%20(temporara).jpg)
+   ![Consultation State Diagram](diagrams/Diagrama%20stari%20consultatii.jpg)
 
 8. **Package Diagram** - Andrei Horceag:
    ![Package Diagram](diagrams/Package%20Diagram.jpg)
