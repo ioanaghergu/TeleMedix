@@ -35,9 +35,23 @@ def generate_one_hour_notifications():
             if not existing_notification:
                 formatted_datetime = consultation.appointment_date.strftime('%Y-%m-%d %H:%M')
                 if user_id == consultation_pacientID:
-                    message = f"Reminder: Your consultation is scheduled at {formatted_datetime}."
+                    doctor_details = cursor.execute(
+                        """
+                        SELECT username 
+                        FROM [User] 
+                        WHERE userID = ?
+                        """,
+                        (consultation_medicID,)).fetchone()
+                    message = f"Reminder: Your consultation with doctor {doctor_details.username} is scheduled at {formatted_datetime}."
                 else:
-                    message = f"Reminder: You have a consultation with a patient at {formatted_datetime}."
+                    patient_details = cursor.execute(
+                        """
+                        SELECT username 
+                        FROM [User] 
+                        WHERE userID = ?
+                        """,
+                        (consultation_pacientID,)).fetchone()
+                    message = f"Reminder: You have a consultation with patient {patient_details.username} at {formatted_datetime}."
 
                 cursor.execute(
                     """
@@ -45,7 +59,7 @@ def generate_one_hour_notifications():
                     VALUES (?, ?, ?, 'one_hour')
                     """,
                     (user_id, consultation.appointmentID, message))
-    conn.commit()
+                conn.commit()
 
 
 def create_consultation_notification(medic_id, consultation_id, patient_name, appointment_datetime):
@@ -93,7 +107,7 @@ def get_notifications():
         """
         SELECT id, message, [read], created_at 
         FROM Notification 
-        WHERE user_id = ?
+        WHERE user_id = ? AND deleted = 0
         ORDER BY created_at DESC
         """,
         (current_user.userid,)).fetchall()
@@ -131,9 +145,30 @@ def delete_notification(notification_id):
     conn = current_app.db
     cursor = conn.cursor()
 
-    cursor.execute(
-        "DELETE FROM Notification WHERE id = ? AND user_id = ? AND [read] = 1",
-        (notification_id, current_user.userid))
+    # Check the type of notification
+    notification = cursor.execute(
+        """
+        SELECT type FROM Notification WHERE id = ? AND user_id = ? AND deleted = 0
+        """,
+        (notification_id, current_user.userid)).fetchone()
+
+    if not notification:
+        flash("Notification not found or already deleted.", category="error")
+        return redirect(url_for('notifications.get_notifications'))
+
+    notification_type = notification.type
+
+    if notification_type == 'one_hour':
+        cursor.execute(
+            """
+            UPDATE Notification SET deleted = 1 WHERE id = ? AND user_id = ?
+            """,
+            (notification_id, current_user.userid))
+    else:
+        cursor.execute(
+            "DELETE FROM Notification WHERE id = ? AND user_id = ? AND [read] = 1",
+            (notification_id, current_user.userid))
+        
     conn.commit()
 
     flash("Notification deleted.", category="success")

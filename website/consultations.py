@@ -239,7 +239,7 @@ def cancel_consultation(appointment_id):
         consultation_date = appointment_date)
 
     # Append cancellation reason to notes  
-    updated_notes = f"{notes}\n\nCancellation Reason: {cancellation_reason}" if cancellation_reason else f"{notes}\n\nCancellation Reason: -"
+    updated_notes = f"{notes}\n\n -Cancellation Reason: {cancellation_reason}" if cancellation_reason else f"{notes}\n\nCancellation Reason: -"
     cursor.execute(
         "UPDATE [Appointment] SET [notes] = ? WHERE [appointmentID] = ?", 
         (updated_notes, appointment_id))
