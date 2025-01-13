@@ -22,7 +22,7 @@ Sistemul utilizează **Patternul Strategy** pentru gestionarea componentei de in
    ![Activity Diagram - Appointment Management](diagrams/Activity%20Diagram%20Appointments%20Management.png)
 
 3. **Authentication Sequence Diagram** - Ioana Ghergu:
-   ![Authentication Sequence Diagram](diagrams/Authentication%20Sequence%20Diagram.png)
+   ![Authentication Sequence Diagram](diagrams/Login%20and%20Sign%20up%20Sequence%20Diagram.png)
 
 4. **Database Diagram** - Balc Larisa:
    ![Database Diagram](diagrams/Diagrama%20baza%20de%20date.jpg)

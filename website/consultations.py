@@ -124,6 +124,9 @@ def retrieve_medic_consultations(order, user_id):
 @consultation.route('/my-consultations', methods=['GET'])
 @login_required
 def get_consultations():
+    appointment_id = request.args.get('appointment_id')
+    status_appointment = request.args.get('status_appointment')
+
     conn = current_app.db
     cursor = conn.cursor()
     
@@ -170,6 +173,9 @@ def get_consultations():
             status = "Cancelled"
         else:
             status = "Attended"
+
+        if appointment_id and appointment.appointmentID == int(appointment_id):
+            status = status_appointment
 
         processed_appointments.append({
             "appointmentID": appointment.appointmentID,
