@@ -17,14 +17,17 @@ Sistemul utilizează **Patternul Strategy** pentru gestionarea componentei de in
 
 1. **Workflow Diagram** - Diagrama Generala:
    ![Workflow Diagram](diagrams/Diagrama%20Workflow.jpg)
+   
+2. **Notifications Sequence Diagram** - Melania Ion:
+   ![Notifications Sequence Diagram](diagrams/Notifications%20Sequence%20Diagram.png)
 
-2. **Activity Diagram - Appointment Management** - Melania Ion:
+3. **Activity Diagram - Appointment Management** - Melania Ion:
    ![Activity Diagram - Appointment Management](diagrams/Activity%20Diagram%20Appointments%20Management.png)
 
-3. **Authentication Sequence Diagram** - Ioana Ghergu:
+4. **Authentication Sequence Diagram** - Ioana Ghergu:
    ![Authentication Sequence Diagram](diagrams/Login%20and%20Sign%20up%20Sequence%20Diagram.png)
 
-4. **Database Diagram** - Balc Larisa:
+5. **Database Diagram** - Balc Larisa:
    ![Database Diagram](diagrams/Diagrama%20baza%20de%20date.jpg)
 
    ## **Structura bazei de date**
@@ -71,7 +74,7 @@ Sistemul utilizează **Patternul Strategy** pentru gestionarea componentei de in
    5. **Availability** → **Medic**: Intervalele orare disponibile ale medicilor.  
    6. **MedicalRecord** → **Patient**, **Medic**: Fișe medicale asociate cu pacienți și medici.  
 
-5. **Use Case Diagram** - Balc Larisa:
+6. **Use Case Diagram** - Balc Larisa:
    ![Use Case Diagram](diagrams/Diagrama%20UML%20UseCase.jpg)
 
    ## **Actori principali**  
@@ -102,7 +105,7 @@ Sistemul utilizează **Patternul Strategy** pentru gestionarea componentei de in
 
    ---
 
-6. **Class Diagram** - Bianca Andrei:
+7. **Class Diagram** - Bianca Andrei:
    ![Class Diagram](diagrams/Diagrama%20clase.jpg)
 
    Diagrama de clase ilustrează structura unui sistem de gestionare a consultațiilor medicale, având clasa **User**, moștenită de **Doctor** și **Patient**. User definește atribute generale (de exemplu username, email) și metode comune (login(), edit_account()), în timp ce Doctor include funcții specifice precum set_availability(). Pacienții pot crea programări prin metoda add_consultation() și își pot gestiona fișele medicale. Clasa **Appointment** stochează detalii legate de consultații, precum data și intervalul, medicul și observațiile, iar doctorii sunt asociați cu specializările și disponibilitățile lor (Availability). Modelul evidențiază clar relațiile dintre utilizatori, programări și componentele esențiale ale sistemului.
