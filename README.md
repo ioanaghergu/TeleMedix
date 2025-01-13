@@ -105,13 +105,27 @@ Sistemul utilizează **Patternul Strategy** pentru gestionarea componentei de in
 6. **Class Diagram** - Bianca Andrei:
    ![Class Diagram](diagrams/Diagrama%20clase.jpg)
 
-7. **Consultation State Diagram** - Bianca Andrei:
+   Diagrama de clase ilustrează structura unui sistem de gestionare a consultațiilor medicale, având clasa **User**, moștenită de **Doctor** și **Patient**. User definește atribute generale (de exemplu username, email) și metode comune (login(), edit_account()), în timp ce Doctor include funcții specifice precum set_availability(). Pacienții pot crea programări prin metoda add_consultation() și își pot gestiona fișele medicale. Clasa **Appointment** stochează detalii legate de consultații, precum data și intervalul, medicul și observațiile, iar doctorii sunt asociați cu specializările și disponibilitățile lor (Availability). Modelul evidențiază clar relațiile dintre utilizatori, programări și componentele esențiale ale sistemului.
+
+8. **Consultation State Diagram** - Bianca Andrei:
    ![Consultation State Diagram](diagrams/Diagrama%20stari%20consultatie.jpg)
 
-8. **Package Diagram** - Andrei Horceag:
+   Diagrama de stări descrie ciclul de viață al unei consultații medicale în cadrul unui sistem de gestionare a programărilor. Procesul începe în starea inițială **Idle**, unde utilizatorul poate iniția diverse acțiuni. Consultația poate trece prin mai multe stări:
+
+      - **Creating appointment** - Pacientul completează câmpurile formularului, iar sistemul validează datele. Dacă programarea este validă, se trimite o notificare de creare; în caz contrar, pacientul solicitant va primi un mesaj de eroare.
+      
+      - **Editing** - Utilizatorul poate edita notele asociate consultației, actualizând informațiile.
+      
+      - **Cancelling appointment** - Programarea poate fi anulată, moment în care se trimite o notificare de anulare.
+      
+      - **Sending notification** - Starea de trimitere a notificărilor are loc pentru acțiuni precum crearea sau anularea consultației, dar și pentru a le reaminti utilizatorilor de programare cu o oră înainte de consultație.
+      
+      - **Deleting appointment** - O programare deja anulată sau marcată ca fiind finalizată poate fi ștearsă definitiv din sistem.
+
+10. **Package Diagram** - Andrei Horceag:
    ![Package Diagram](diagrams/Package%20Diagram.jpg)
 
-9. **Deployment Diagram** - Andrei Horceag:
+11. **Deployment Diagram** - Andrei Horceag:
    ![Deployment Diagram](diagrams/Deployment%20Diagram.jpg)
 
 ## Instalare 🛠️
