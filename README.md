@@ -56,11 +56,44 @@ ________________________________________________________________________________
 
 4. **Activity Diagram - Appointment Management** - Melania Ion:
    ![Activity Diagram - Appointment Management](diagrams/Activity%20Diagram%20Appointments%20Management.png)
+   
+## Diagrama de activitate pentru gestionarea consultațiilor
+### Punctul de start
+- Se începe cu un `nod inițial`, când utilizatorul autentificat accesează secțiunea de management al consultațiilor.
 
-5. **Authentication Sequence Diagram** - Ioana Ghergu:
+### Extragerea și clasificarea consultațiilor
+- Consultațiile sunt preluate din baza de date, iar apoi statusul acestora este determinat pentru a fi clasificate ca:
+  - Active,
+  - Cancelled,
+  - Attended.
+
+### Afișarea listei inițiale
+- După clasificare, lista de consultații este afișată utilizatorului.
+
+### Filtrare și sortare
+- Un `nod de fork` împarte fluxul în două activități:
+  - Aplicarea unui filtru (în funcție de statusul consultațiilor),
+  - Sortarea consultațiilor (în funcție de data consultațiilor: cele mai recente sau cele mai vechi).
+
+### Reunirea fluxului
+- Un `nod de join` aduce activitățile anterioare într-un singur flux, iar lista de consultații dorite este afișată utilizatorului.
+
+### Anularea sau ștergerea unei consultații
+- Utilizatorul decide ce face în continuare printr-un `nod de decizie` cu `gărzi` corespunzătoare:
+  - Dacă alege să anuleze o consultație, se verifică dacă aceasta este activă și, dacă da, se finalizează procesul de anulare.
+  - Dacă alege să șteargă o consultație, aceasta poate fi ștearsă doar dacă este anulată sau a avut loc deja.
+
+### Finalizare
+- După aceste activități, noii pasi sunt determinați de un nou nod de decizie:
+  - Fie utilizatorul se întoarce la activitatea de determinare a noilor statusuri ale consultațiilor și activitatea continuă,
+  - Fie a terminat de gestionat consultațiile și avem un `nod final` care finalizează întreaga activitate.
+___________________________________________________________________________________________________________________________
+
+
+6. **Authentication Sequence Diagram** - Ioana Ghergu:
    ![Authentication Sequence Diagram](diagrams/Login%20and%20Sign%20up%20Sequence%20Diagram.png)
 
-6. **Database Diagram** - Balc Larisa:
+7. **Database Diagram** - Balc Larisa:
    ![Database Diagram](diagrams/Diagrama%20baza%20de%20date.jpg)
 
    ## **Structura bazei de date**
@@ -107,7 +140,7 @@ ________________________________________________________________________________
    5. **Availability** → **Medic**: Intervalele orare disponibile ale medicilor.  
    6. **MedicalRecord** → **Patient**, **Medic**: Fișe medicale asociate cu pacienți și medici.  
 
-7. **Use Case Diagram** - Balc Larisa:
+8. **Use Case Diagram** - Balc Larisa:
    ![Use Case Diagram](diagrams/Diagrama%20UML%20UseCase.jpg)
 
    ## **Actori principali**  
@@ -138,12 +171,12 @@ ________________________________________________________________________________
 
    ---
 
-8. **Class Diagram** - Bianca Andrei:
+9. **Class Diagram** - Bianca Andrei:
    ![Class Diagram](diagrams/Diagrama%20clase.jpg)
 
    Diagrama de clase ilustrează structura unui sistem de gestionare a consultațiilor medicale, având clasa **User**, moștenită de **Doctor** și **Patient**. User definește atribute generale (de exemplu username, email) și metode comune (login(), edit_account()), în timp ce Doctor include funcții specifice precum set_availability(). Pacienții pot crea programări prin metoda add_consultation() și își pot gestiona fișele medicale. Clasa **Appointment** stochează detalii legate de consultații, precum data și intervalul, medicul și observațiile, iar doctorii sunt asociați cu specializările și disponibilitățile lor (Availability). Modelul evidențiază clar relațiile dintre utilizatori, programări și componentele esențiale ale sistemului.
 
-9. **Consultation State Diagram** - Bianca Andrei:
+10. **Consultation State Diagram** - Bianca Andrei:
    ![Consultation State Diagram](diagrams/Diagrama%20stari%20consultatie.jpg)
 
    Diagrama de stări descrie ciclul de viață al unei consultații medicale în cadrul unui sistem de gestionare a programărilor. Procesul începe în starea inițială **Idle**, unde utilizatorul poate iniția diverse acțiuni. Consultația poate trece prin mai multe stări:
@@ -158,10 +191,10 @@ ________________________________________________________________________________
       
       - **Deleting appointment** - O programare deja anulată sau marcată ca fiind finalizată poate fi ștearsă definitiv din sistem.
 
-10. **Package Diagram** - Andrei Horceag:
+11. **Package Diagram** - Andrei Horceag:
    ![Package Diagram](diagrams/Package%20Diagram.jpg)
 
-11. **Deployment Diagram** - Andrei Horceag:
+12. **Deployment Diagram** - Andrei Horceag:
    ![Deployment Diagram](diagrams/Deployment%20Diagram.jpg)
 
 ## Instalare 🛠️
