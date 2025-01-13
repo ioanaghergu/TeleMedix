@@ -194,8 +194,78 @@ ________________________________________________________________________________
 11. **Package Diagram** - Andrei Horceag:
    ![Package Diagram](diagrams/Package%20Diagram.jpg)
 
+   ## **Pachete Principale**
+
+   ---
+
+   ### 1. **AI Diagnosis Prediction**
+   - Utilizează modele AI pentru predicții medicale.
+   - Interacționează cu `Utils` și `Database Server`.
+
+   ### 2. **Web**
+   - Gestionarea logicii aplicației web:
+   - **Views:** Interfața utilizatorului.
+   - **Design:** Stiluri și șabloane.
+   - **Routes:** Navigarea utilizatorilor.
+   - Se conectează la `Utils` și `Database Server`.
+
+   ### 3. **Utils**
+   - Funcționalități suport:
+   - **PDF Parsing:** Extragerea datelor din fișiere PDF.
+   - **Torch:** Integrare AI.
+   - **Exceptions:** Gestionarea erorilor.
+   - **SocketIO:** Funcții în timp real.
+
+   ### 4. **Database Server**
+   - Gestionarea datelor:
+   - **Database:** Structură de date și tabele.
+   - **Authentication:** Autentificare utilizatori.
+   - **Relations:** Relații între entități.
+   - Conectat prin ODBC Driver 17.
+
+   ### 5. **Tests**
+   - Scripturi de testare unitară pentru validarea funcționalităților.
+
+   ---
+
 12. **Deployment Diagram** - Andrei Horceag:
    ![Deployment Diagram](diagrams/Deployment%20Diagram.jpg)
+
+   # Prezentare Generală a Arhitecturii Sistemului
+
+   ---
+
+   ### 1. **Server Client**
+   - **Descriere:** Serverul client servește ca punct de intrare pentru utilizatori pentru a accesa aplicația web.
+   - **Funcționalitate Principală:** Găzduiește interfața aplicației web, permițând interacțiunea utilizatorilor cu sistemul.
+
+   ---
+
+   ### 2. **Load Balancer**
+   - **Descriere:** Un Load Balancer este utilizat pentru a distribui uniform traficul între mai multe noduri ale aplicației.
+   - **Scop:** Asigură o disponibilitate ridicată și previne supraîncărcarea unui singur nod.
+
+   ---
+
+   ### 3. **Nodurile de Aplicație**
+   - **Descriere:** Nodurile (denumite `ApplicationServer1` până la `ApplicationServer4`) gestionează logica de business a aplicației. Aceste noduri funcționează independent pentru a asigura scalabilitatea și toleranța la erori.
+   - **Module implementate în fiecare server de aplicație:**
+   - **Sistem de Autentificare pe Bază de Roluri:** Gestionează autentificarea utilizatorilor și accesul pe baza rolurilor.
+   - **Interfață Utilizator (UI):** Furnizează interfața grafică utilizatorilor.
+   - **Integrare Videoconferință:** Permite consultații video în timp real.
+   - **Diagnostice Generat de AI:** Utilizează inteligența artificială pentru a oferi diagnostice bazate pe datele introduse.
+   - **Procesare Fișiere PDF Medicale:** Procesează documente medicale PDF pentru extragerea datelor structurate.
+
+   ---
+
+   ### 4. **Serverul de Bază de Date Azure**
+   - **Descriere:** Bază de date centralizată găzduită pe Azure, servind drept depozit de date pentru întregul sistem.
+   - **Scop:** Gestionează toate datele persistente, inclusiv:
+   - Datele de autentificare și autorizare ale utilizatorilor.
+   - Orarul consultațiilor și dosarele medicale.
+   - Datele de diagnostic generate de modulul AI.
+
+   ---
 
 ## Instalare 🛠️
 
