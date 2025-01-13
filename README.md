@@ -57,7 +57,25 @@ cd TeleMedix
 pip install -r requirements.txt
 ```
 
-### 3. Configurarea Parametrilor AI 🤖
+### 3. Instalează Dependențele pentru aplicația de consultări online 📦
+
+Aceasta a fost realizată utilizând node.js(v20.13.1). Node poate fi descărcat și instalat de aici: https://nodejs.org/en/download/current.
+După instalare, vom rula următoarele comenzi:
+
+```bash
+cd videoCall
+npm install mkcert -g
+mkcert create-ca
+mkcert create-cert
+npm init -y
+Get-Content dependencies.txt | ForEach-Object { npm install --save $_ }
+```
+Pentru a rula aplicația vom folosi comanda:
+
+```bash
+node ./signalingServer.js
+```
+### 4. Configurarea Parametrilor AI 🤖
 
 #### Unzip:
 
