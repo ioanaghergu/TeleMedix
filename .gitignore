@@ -4,5 +4,11 @@ test/__pycache__
 modules/ai_diagnosis_prediction/__pycache__
 .pytest_cache
 instance
-
-
+videoCall/node_modules
+videoCall/ca.crt
+videoCall/ca.key
+videoCall/cert.crt
+videoCall/cert.key
+videoCall/package-lock.json
+videoCall/package.json
+videoCall/node_modules
