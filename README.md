@@ -27,8 +27,80 @@ Sistemul utilizează **Patternul Strategy** pentru gestionarea componentei de in
 4. **Database Diagram** - Balc Larisa:
    ![Database Diagram](diagrams/Diagrama%20baza%20de%20date.jpg)
 
+   ## **Structura bazei de date**
+
+   ### **Tabele și atribute**
+
+   1. **User**  
+      Gestionează informațiile utilizatorilor (pacienți, medici, admini).  
+      - `userID`, `email`, `password`, `username`, `birth_date`, `role`.  
+
+   2. **Patient**  
+      Conține date despre pacienți.  
+      - `patientID` (cheie primară și externă), `insurance_no`, `emergency_contact`.  
+
+   3. **Medic**  
+      Gestionează datele despre medici.  
+      - `medicID` (cheie primară și externă), `specializationID` (cheie externă), `licence_no`.  
+
+   4. **Specialization**  
+      Definește specializările medicale.  
+      - `specializationID`, `specialization_name`.  
+
+   5. **Service**  
+      Gestionează serviciile asociate cu specializările.  
+      - `serviceID`, `specializationID` (cheie externă), `service_name`.  
+
+   6. **Appointment**  
+      Centralizează programările.  
+      - `appointmentID`, `patientID`, `medicID`, `availabilityID`, `serviceID`, `notes`.  
+
+   7. **Availability**  
+      Gestionează intervalele orare ale medicilor.  
+      - `availabilityID`, `medicID`, `date`, `start_time`, `end_time`, `availability_status`.  
+
+   8. **MedicalRecord**  
+      Stochează informații medicale.  
+      - `recordID`, `medicID`, `patientID`, `symptoms`, `diagnosis`, `treatment`.  
+
+   ### **Relații între tabele**
+   1. **User** → **Patient**, **Medic**: Toți pacienții și medicii sunt utilizatori.  
+   2. **Medic** → **Specialization**: Medicii au o specializare.  
+   3. **Service** → **Specialization**: Serviciile sunt legate de specializări.  
+   4. **Appointment** → **Patient**, **Medic**, **Service**, **Availability**: Detaliile unei programări.  
+   5. **Availability** → **Medic**: Intervalele orare disponibile ale medicilor.  
+   6. **MedicalRecord** → **Patient**, **Medic**: Fișe medicale asociate cu pacienți și medici.  
+
 5. **Use Case Diagram** - Balc Larisa:
    ![Use Case Diagram](diagrams/Diagrama%20UML%20UseCase.jpg)
+
+   ## **Actori principali**  
+   1. **Pacient**: Utilizator al platformei pentru gestionarea sănătății.  
+   2. **Medic**: Specialist care oferă consultații și gestionează programări.  
+   3. **Sistem AI**: Componentă automată pentru analiză medicală și asistență.  
+
+   ## **Funcționalități**  
+
+   ### **Pentru Pacient**  
+   - **Profil medici**: Căutare și vizualizare informații.  
+   - **Sugestii AI**: Recomandări de medic bazate pe datele pacientului.  
+   - **Documente medicale**: Încărcare PDF și extracție simptome.  
+   - **Dosar medical**: Vizualizare și actualizare istoric.  
+   - **Cont**: Autentificare, editare profil.  
+   - **Consultații**:  
+      - Programare, notificări status, anulare/reprogramare.  
+      - Vizualizare consultații viitoare/anterioare.  
+
+   ### **Pentru Medic**  
+   - **Consultații**:  
+      - Vizualizare viitoare/anterioare, notificări.  
+   - **Program**: Stabilire orar disponibilitate.  
+   - **Consultații online**: Organizare întâlniri virtuale.   
+
+   ## **Relație cu AI**  
+   - Sugestii personalizate și analiză automată a documentelor pentru recomandări și simplificarea consultațiilor.  
+
+   ---
 
 6. **Class Diagram** - Bianca Andrei:
    ![Class Diagram](diagrams/Diagrama%20clase.jpg)
