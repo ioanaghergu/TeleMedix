@@ -21,13 +21,46 @@ Sistemul utilizează **Patternul Strategy** pentru gestionarea componentei de in
 2. **Notifications Sequence Diagram** - Melania Ion:
    ![Notifications Sequence Diagram](diagrams/Notifications%20Sequence%20Diagram.png)
 
-3. **Activity Diagram - Appointment Management** - Melania Ion:
+## Diagrama de secvență pentru funcționalitatea - notificări
+### Paricipanți
+- Utilizator (actor): Inițiază acțiuni în aplicație.
+- App UI: Interfața grafică ce preia acțiunile utilizatorului și comunică cu backend-ul.
+- Backend: Gestionează logica aplicației.
+- Database: Baza de date corespunzătoare aplicației.
+  
+### Notificările cu rolul de "reminder"
+- Se verifică dacă utilizatorul este logat (operatorul `alt` indică cele două cazuri: **logat** sau **nu**).
+- Dacă utilizatorul este logat:
+  - Backend-ul caută consultații ce urmează sa aibă loc în următoarea oră.
+  - Operatorul de interacțiune `opt` este utilizat pentru a reprezenta faptul că, dacă acestea există, backend-ul creează notificările cu detaliile aferente și le inserează în baza de date.
+  - După acest pas, backend-ul calculează numărul notificărilor necitite (existente deja sau nou-create) și trimite această valoare către frontend pentru actualizarea clopoțelului.
+
+### Creare consultație
+- Când un pacient creează o noua consultație cu succes (operatorul `alt` evidențiază cele două rezultate posibile: **validare reușită** sau **eșuată**), backend-ul creează o notificare pentru medic pentru a-l informa de acest aspect.
+
+### Anulare consultație
+  - Notificările sunt generate pentru celălalt utilizator în funcție de cine anulează: **pacient** sau **medic**.
+  - Operatorul `alt` determină cele două ramuri pentru a determina ce tip de mesaj se creează ca notificare și cui îi este transmis.
+
+### Centrul de notificări
+- La cererea utilizatorului, backend-ul returnează toate notificările (cele noi, precum si cele marcate deja ca "read"), începând cu cea mai recentă.
+
+### Marcarea notificărilor ca "read"
+- Backend-ul actualizează notificarea (`isRead=true`). Trimite apoi frontend-ului numărul actualizat de notificări necitite pentru clopoțel și informarea utilizatorului.
+
+### Ștergerea notificării
+- Se folosește operatorul `alt` pentru a verifica dacă notificarea este citită:
+  - În caz afirmativ, este trimisă cererea pentru a fi ștearsă.
+  - În caz contrar, se afișează un mesaj de eroare.
+___________________________________________________________________________________________________________________________
+
+4. **Activity Diagram - Appointment Management** - Melania Ion:
    ![Activity Diagram - Appointment Management](diagrams/Activity%20Diagram%20Appointments%20Management.png)
 
-4. **Authentication Sequence Diagram** - Ioana Ghergu:
+5. **Authentication Sequence Diagram** - Ioana Ghergu:
    ![Authentication Sequence Diagram](diagrams/Login%20and%20Sign%20up%20Sequence%20Diagram.png)
 
-5. **Database Diagram** - Balc Larisa:
+6. **Database Diagram** - Balc Larisa:
    ![Database Diagram](diagrams/Diagrama%20baza%20de%20date.jpg)
 
    ## **Structura bazei de date**
@@ -74,7 +107,7 @@ Sistemul utilizează **Patternul Strategy** pentru gestionarea componentei de in
    5. **Availability** → **Medic**: Intervalele orare disponibile ale medicilor.  
    6. **MedicalRecord** → **Patient**, **Medic**: Fișe medicale asociate cu pacienți și medici.  
 
-6. **Use Case Diagram** - Balc Larisa:
+7. **Use Case Diagram** - Balc Larisa:
    ![Use Case Diagram](diagrams/Diagrama%20UML%20UseCase.jpg)
 
    ## **Actori principali**  
@@ -105,12 +138,12 @@ Sistemul utilizează **Patternul Strategy** pentru gestionarea componentei de in
 
    ---
 
-7. **Class Diagram** - Bianca Andrei:
+8. **Class Diagram** - Bianca Andrei:
    ![Class Diagram](diagrams/Diagrama%20clase.jpg)
 
    Diagrama de clase ilustrează structura unui sistem de gestionare a consultațiilor medicale, având clasa **User**, moștenită de **Doctor** și **Patient**. User definește atribute generale (de exemplu username, email) și metode comune (login(), edit_account()), în timp ce Doctor include funcții specifice precum set_availability(). Pacienții pot crea programări prin metoda add_consultation() și își pot gestiona fișele medicale. Clasa **Appointment** stochează detalii legate de consultații, precum data și intervalul, medicul și observațiile, iar doctorii sunt asociați cu specializările și disponibilitățile lor (Availability). Modelul evidențiază clar relațiile dintre utilizatori, programări și componentele esențiale ale sistemului.
 
-8. **Consultation State Diagram** - Bianca Andrei:
+9. **Consultation State Diagram** - Bianca Andrei:
    ![Consultation State Diagram](diagrams/Diagrama%20stari%20consultatie.jpg)
 
    Diagrama de stări descrie ciclul de viață al unei consultații medicale în cadrul unui sistem de gestionare a programărilor. Procesul începe în starea inițială **Idle**, unde utilizatorul poate iniția diverse acțiuni. Consultația poate trece prin mai multe stări:
