@@ -49,6 +49,7 @@
                     <th scope="col">Notes</th>
                     <th scope="col">Status</th>
                     <th scope="col">Actions</th>
+                    <th scope="col">Appointment</th>
                     {% if current_user.roleid == 3 %}
                         <th scope="col" class="text-center">Medical File</th>
                     {% endif %}
@@ -87,7 +88,7 @@
                                 <button 
                                     id="edit-button-{{ appointment.appointmentID }}" 
                                     class="btn btn-info btn-sm" 
-                                    onclick="toggleEditForm({{ appointment.appointmentID }})"
+                                    onclick="toggleEditForm({{appointment.appointmentID}})"
                                 >
                                     Edit
                                 </button>
@@ -123,6 +124,16 @@
                             <form method="POST" action="{{ url_for('consultation.delete_consultation', appointment_id=appointment['appointmentID']) }}">
                                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                             </form>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if appointment.status == 'Active' %}
+                                <a href="https://localhost:8080/{{ appointment['appointmentID'] }}/{{ current_user.username }}">
+                                <button id="join" type="submit" class="btn btn-success btn-sm">Join</button>
+                            </a>
+                            
+                            
                         {% endif %}
                     </td>
 
