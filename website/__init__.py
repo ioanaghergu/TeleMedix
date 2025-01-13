@@ -25,8 +25,8 @@ def create_app():
     app.register_blueprint(notifications, url_prefix='/')
 
     db_instance = DatabaseConnection(
-        server='tcp:tele-medix.database.windows.net,1433',
-        database='telemedix',
+        server='tcp:telemedixdb.database.windows.net,1433',
+        database='telemedixDB',
         username='telemedix',
         password='ProiectMOPS!',
     )
