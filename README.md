@@ -4,7 +4,8 @@ Acest repository conține implementarea unei **Platforme de Telemedicină** care
 
 **Documentație:** [Documentație](AMSS_Documentatie.pdf)
 
-**Contribuția la proiect:** https://unibucro0-my.sharepoint.com/:x:/r/personal/larisa-georgiana_balc_s_unibuc_ro/_layouts/15/Doc.aspx?sourcedoc=%7BCD4CECB7-5E91-423E-B6EB-DDAD785E8CC1%7D&file=TaskuriProiect.xlsx&action=default&mobileredirect=true
+**Contribuția la proiect:** [Listă task-uri](https://unibucro0-my.sharepoint.com/x/:r/personal/larisa-georgiana_balc_s_unibuc_ro/_layouts/15/Doc.aspx?sourcedoc=%7BCD4CECB7-5E91-423E-B6EB-DDAD785E8CC1%7D&file=TaskuriProiect.xlsx&action=default&mobileredirect=true)
+
 ## Funcționalități 🚀
 
 - **Consultații Online** 🩺💬
