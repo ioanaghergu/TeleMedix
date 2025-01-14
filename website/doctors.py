@@ -137,8 +137,9 @@ def availability_form():
                 end_date = start_date + datetime.timedelta(minutes=30)
                 cursor.execute('INSERT INTO [Availability] ([date], [start_time], [end_time], [medicID], [availability_status]) VALUES (?, ?, ?, ?, ?)', datetime.datetime.strptime(date, '%Y-%m-%d'), start_date, end_date, current_user.userid, 'FREE')
                 conn.commit()
+            availability_slots = cursor.execute('SELECT [date], [start_time], [end_time], [availability_status] FROM [Availability] WHERE [medicID] = ? ORDER BY [date], [start_time] DESC', current_user.userid).fetchall()
             flash("Availability slots added successfully.", category='success')
-            return render_template("doctors/availability_slots.html", user=current_user)
+            return render_template("doctors/availability_slots.html", user=current_user, availability_slots=availability_slots)
 
     return render_template("doctors/availability_form.html", user=current_user)
 
