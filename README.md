@@ -257,24 +257,24 @@ Sistemul utilizează **Patternul Strategy** pentru gestionarea componentei de in
    ## Diagrama de deployment pentru aplicația de videoconferință
 
    ### Noduri
-   - **Client 1 Browser / Client 2 Browser**: în cadrul acestora rulează aplicația de apel video. Fiecare client are următoarele artefacte:
+   - **Client 1 Device / Client 2 Device**: în cadrul acestora rulează aplicația de apel video. Fiecare client are următoarele artefacte:
      - **Client Socket**: conexiune pentru comunicarea cu serverul de signaling
      - **Media Streams Fetching**: modul pentru accesarea fluxurilor media de la cameră și microfon
-     - **WebRTC Connection**: gestionează conexiunea peer-to-peer pentru transferul direct al fluxurilor media
+     - **WebRTC Connection**: modul pentru gestionarea conexiunii peer-to-peer pentru transferul direct al fluxurilor media
    
    - **Signaling Server**: server pentru comunicarea între clienți. Conține următoarele artefacte:
-     - **Socket Endpoint**: gestionează conexiunile socket cu clienții.
+     - **Socket Endpoint**: gestionează conexiunile socket cu clienții
      - **SDP Offer/Answer Handling**: mecanism de procesare a ofertelor și răspunsurilor SDP pentru configurarea conexiunii WebRTC
      - **ICE Candidates Exchange**: mecanism de partajare a candidaților ICE între clienți pentru stabilirea traseului optim al conexiunii
    
    - **STUN Server**: server utilizat pentru determinarea adreselor publice ale clienților și traversarea NAT-ului
 
    ### Fluxul: Comunicarea este bidirecțională
-   - Client 1 inițiază un apel video. Browserul său accesează fluxurile media prin modulul **Media Streams Fetching**
+   - Client 1 inițiază un apel video. Browserul său primește acces la fluxurile media prin modulul **Media Streams Fetching**
    - Oferta SDP este trimisă către serveru-ul de signaling prin intermediul socket-ului asociat clientului 1
-   - Serverul de semnalizare transferă oferta către Client 2, care trimite înapoi un răspuns SDP
-   - Ambii clienți schimbă candidații ICE prin server pentru a configura conexiunea peer-to-peer
-   - **STUN Server** este utilizat ca dependință pentru conexiunea WebRTC a ambilor clienți. Acesta este necesar pentru generarea de ICE candidates, care sunt de fapt posibile rute prin clienții pot comunica
+   - Serverul de signaling transferă oferta către Client 2. Când acesta răspunde la apel, o ofertă SDP de tip răspuns este trimisă înapoi către serverul de signaling, care o pasează ulterior către Client 1
+   - Ambii clienți schimbă candidații ICE prin serverul de signaling pentru a configura conexiunea peer-to-peer
+   - **STUN Server** este utilizat ca dependință pentru conexiunea WebRTC a ambilor clienți. Acesta este necesar pentru generarea de ICE candidates, care sunt de fapt posibile rute prin care clienții pot comunica
 
    ---
 
