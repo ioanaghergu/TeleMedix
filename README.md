@@ -15,84 +15,104 @@ Acest repository conține implementarea unei **Platforme de Telemedicină** care
 
 ## Arhitectură și Design 🏗️
 
-Sistemul utilizează **Patternul Strategy** pentru gestionarea componentei de inteligență artificială și **Patternul Model-View-Controller (MVC)** pentru o arhitectură modulară și ușor de întreținut.
+Sistemul utilizează **Patternul Strategy** pentru gestionarea componentei de inteligență artificială și **Patternul Singleton** pentru gestionarea conexiunii la baza de date, oferind o arhitectură modulară și ușor de întreținut.
 
 ### Diagrame 📊
 
 1. **Workflow Diagram** - Diagrama Generala:
    ![Workflow Diagram](diagrams/Diagrama%20Workflow.jpg)
+
+   Aceasta diagramă descrie fluxul unei platforme de consultații medicale online, împărțită în două categorii principale: **pacient** și **medic**.
+
+   1. **Pacient:**
+      - Se autentifică sau se înregistrează.
+      - Poate programa consultații (selectare medic, confirmare dată și oră).
+      - Participă la consultații video și primește diagnosticul.
+      - AI analizează simptomele și oferă un diagnostic preliminar, completând dosarul medical.
+
+   2. **Medic:**
+      - Se autentifică și își gestionează profilul.
+      - Intră în consultații video, vizualizează dosarul pacientului, oferă diagnosticul și actualizează dosarul medical.
+      - Poate gestiona și edita programările, notificând pacienții despre modificări.
+
+   3. **Sistem:**
+      - Automatizează notificările și sincronizează calendarele utilizatorilor.
+      - Folosește AI pentru a analiza datele și a îmbunătăți dosarele medicale.
+
+   ---
    
 2. **Notifications Sequence Diagram** - Melania Ion:
    ![Notifications Sequence Diagram](diagrams/Notifications%20Sequence%20Diagram.png)
 
-## Diagrama de secvență pentru funcționalitatea - notificări
-### Paricipanți
-- Utilizator (actor): Inițiază acțiuni în aplicație.
-- App UI: Interfața grafică ce preia acțiunile utilizatorului și comunică cu backend-ul.
-- Backend: Gestionează logica aplicației.
-- Database: Baza de date corespunzătoare aplicației.
-  
-### Notificările cu rolul de "reminder"
-- Se verifică dacă utilizatorul este logat (operatorul `alt` indică cele două cazuri: **logat** sau **nu**).
-- Dacă utilizatorul este logat:
-  - Backend-ul caută consultații ce urmează sa aibă loc în următoarea oră.
-  - Operatorul de interacțiune `opt` este utilizat pentru a reprezenta faptul că, dacă acestea există, backend-ul creează notificările cu detaliile aferente și le inserează în baza de date.
-  - După acest pas, backend-ul calculează numărul notificărilor necitite (existente deja sau nou-create) și trimite această valoare către frontend pentru actualizarea clopoțelului.
+   ## Diagrama de secvență pentru funcționalitatea - notificări
+   ### Paricipanți
+   - Utilizator (actor): Inițiază acțiuni în aplicație.
+   - App UI: Interfața grafică ce preia acțiunile utilizatorului și comunică cu backend-ul.
+   - Backend: Gestionează logica aplicației.
+   - Database: Baza de date corespunzătoare aplicației.
+   
+   ### Notificările cu rolul de "reminder"
+   - Se verifică dacă utilizatorul este logat (operatorul `alt` indică cele două cazuri: **logat** sau **nu**).
+   - Dacă utilizatorul este logat:
+   - Backend-ul caută consultații ce urmează sa aibă loc în următoarea oră.
+   - Operatorul de interacțiune `opt` este utilizat pentru a reprezenta faptul că, dacă acestea există, backend-ul creează notificările cu detaliile aferente și le inserează în baza de date.
+   - După acest pas, backend-ul calculează numărul notificărilor necitite (existente deja sau nou-create) și trimite această valoare către frontend pentru actualizarea clopoțelului.
 
-### Creare consultație
-- Când un pacient creează o noua consultație cu succes (operatorul `alt` evidențiază cele două rezultate posibile: **validare reușită** sau **eșuată**), backend-ul creează o notificare pentru medic pentru a-l informa de acest aspect.
+   ### Creare consultație
+   - Când un pacient creează o noua consultație cu succes (operatorul `alt` evidențiază cele două rezultate posibile: **validare reușită** sau **eșuată**), backend-ul creează o notificare pentru medic pentru a-l informa de acest aspect.
 
-### Anulare consultație
-  - Notificările sunt generate pentru celălalt utilizator în funcție de cine anulează: **pacient** sau **medic**.
-  - Operatorul `alt` determină cele două ramuri pentru a determina ce tip de mesaj se creează ca notificare și cui îi este transmis.
+   ### Anulare consultație
+   - Notificările sunt generate pentru celălalt utilizator în funcție de cine anulează: **pacient** sau **medic**.
+   - Operatorul `alt` determină cele două ramuri pentru a determina ce tip de mesaj se creează ca notificare și cui îi este transmis.
 
-### Centrul de notificări
-- La cererea utilizatorului, backend-ul returnează toate notificările (cele noi, precum si cele marcate deja ca "read"), începând cu cea mai recentă.
+   ### Centrul de notificări
+   - La cererea utilizatorului, backend-ul returnează toate notificările (cele noi, precum si cele marcate deja ca "read"), începând cu cea mai recentă.
 
-### Marcarea notificărilor ca "read"
-- Backend-ul actualizează notificarea (`isRead=true`). Trimite apoi frontend-ului numărul actualizat de notificări necitite pentru clopoțel și informarea utilizatorului.
+   ### Marcarea notificărilor ca "read"
+   - Backend-ul actualizează notificarea (`isRead=true`). Trimite apoi frontend-ului numărul actualizat de notificări necitite pentru clopoțel și informarea utilizatorului.
 
-### Ștergerea notificării
-- Se folosește operatorul `alt` pentru a verifica dacă notificarea este citită:
-  - În caz afirmativ, este trimisă cererea pentru a fi ștearsă.
-  - În caz contrar, se afișează un mesaj de eroare.
-___________________________________________________________________________________________________________________________
+   ### Ștergerea notificării
+   - Se folosește operatorul `alt` pentru a verifica dacă notificarea este citită:
+   - În caz afirmativ, este trimisă cererea pentru a fi ștearsă.
+   - În caz contrar, se afișează un mesaj de eroare.
+
+   ---
 
 3. **Activity Diagram - Appointment Management** - Melania Ion:
    ![Activity Diagram - Appointment Management](diagrams/Activity%20Diagram%20Appointments%20Management.png)
    
-## Diagrama de activitate pentru gestionarea consultațiilor
-### Punctul de start
-- Se începe cu un `nod inițial`, când utilizatorul autentificat accesează secțiunea de management al consultațiilor.
+   ## Diagrama de activitate pentru gestionarea consultațiilor
+   ### Punctul de start
+   - Se începe cu un `nod inițial`, când utilizatorul autentificat accesează secțiunea de management al consultațiilor.
 
-### Extragerea și clasificarea consultațiilor
-- Consultațiile sunt preluate din baza de date, iar apoi statusul acestora este determinat pentru a fi clasificate ca:
-  - Active,
-  - Cancelled,
-  - Attended.
+   ### Extragerea și clasificarea consultațiilor
+   - Consultațiile sunt preluate din baza de date, iar apoi statusul acestora este determinat pentru a fi clasificate ca:
+   - Active,
+   - Cancelled,
+   - Attended.
 
-### Afișarea listei inițiale
-- După clasificare, lista de consultații este afișată utilizatorului.
+   ### Afișarea listei inițiale
+   - După clasificare, lista de consultații este afișată utilizatorului.
 
-### Filtrare și sortare
-- Un `nod de fork` împarte fluxul în două activități:
-  - Aplicarea unui filtru (în funcție de statusul consultațiilor),
-  - Sortarea consultațiilor (în funcție de data consultațiilor: cele mai recente sau cele mai vechi).
+   ### Filtrare și sortare
+   - Un `nod de fork` împarte fluxul în două activități:
+   - Aplicarea unui filtru (în funcție de statusul consultațiilor),
+   - Sortarea consultațiilor (în funcție de data consultațiilor: cele mai recente sau cele mai vechi).
 
-### Reunirea fluxului
-- Un `nod de join` aduce activitățile anterioare într-un singur flux, iar lista de consultații dorite este afișată utilizatorului.
+   ### Reunirea fluxului
+   - Un `nod de join` aduce activitățile anterioare într-un singur flux, iar lista de consultații dorite este afișată utilizatorului.
 
-### Anularea sau ștergerea unei consultații
-- Utilizatorul decide ce face în continuare printr-un `nod de decizie` cu `gărzi` corespunzătoare:
-  - Dacă alege să anuleze o consultație, se verifică dacă aceasta este activă și, dacă da, se finalizează procesul de anulare.
-  - Dacă alege să șteargă o consultație, aceasta poate fi ștearsă doar dacă este anulată sau a avut loc deja.
+   ### Anularea sau ștergerea unei consultații
+   - Utilizatorul decide ce face în continuare printr-un `nod de decizie` cu `gărzi` corespunzătoare:
+   - Dacă alege să anuleze o consultație, se verifică dacă aceasta este activă și, dacă da, se finalizează procesul de anulare.
+   - Dacă alege să șteargă o consultație, aceasta poate fi ștearsă doar dacă este anulată sau a avut loc deja.
 
-### Finalizare
-- După aceste activități, noii pasi sunt determinați de un nou nod de decizie:
-  - Fie utilizatorul se întoarce la activitatea de determinare a noilor statusuri ale consultațiilor și activitatea continuă,
-  - Fie a terminat de gestionat consultațiile și avem un `nod final` care finalizează întreaga activitate.
-___________________________________________________________________________________________________________________________
-
+   ### Finalizare
+   - După aceste activități, noii pasi sunt determinați de un nou nod de decizie:
+   - Fie utilizatorul se întoarce la activitatea de determinare a noilor statusuri ale consultațiilor și activitatea continuă,
+   - Fie a terminat de gestionat consultațiile și avem un `nod final` care finalizează întreaga activitate.
+   
+   ---
 
 4. **Database Diagram** - Balc Larisa:
    ![Database Diagram](diagrams/Diagrama%20baza%20de%20date.jpg)
@@ -141,6 +161,8 @@ ________________________________________________________________________________
    5. **Availability** → **Medic**: Intervalele orare disponibile ale medicilor.  
    6. **MedicalRecord** → **Patient**, **Medic**: Fișe medicale asociate cu pacienți și medici.  
 
+   ---
+
 5. **Use Case Diagram** - Balc Larisa:
    ![Use Case Diagram](diagrams/Diagrama%20UML%20UseCase.jpg)
 
@@ -177,6 +199,8 @@ ________________________________________________________________________________
 
    Diagrama de clase ilustrează structura unui sistem de gestionare a consultațiilor medicale, având clasa **User**, moștenită de **Doctor** și **Patient**. User definește atribute generale (de exemplu username, email) și metode comune (login(), edit_account()), în timp ce Doctor include funcții specifice precum set_availability(). Pacienții pot crea programări prin metoda add_consultation() și își pot gestiona fișele medicale. Clasa **Appointment** stochează detalii legate de consultații, precum data și intervalul, medicul și observațiile, iar doctorii sunt asociați cu specializările și disponibilitățile lor (Availability). Modelul evidențiază clar relațiile dintre utilizatori, programări și componentele esențiale ale sistemului.
 
+   ---
+
 7. **Consultation State Diagram** - Bianca Andrei:
    ![Consultation State Diagram](diagrams/Diagrama%20stari%20consultatie.jpg)
 
@@ -192,8 +216,11 @@ ________________________________________________________________________________
       
       - **Deleting appointment** - O programare deja anulată sau marcată ca fiind finalizată poate fi ștearsă definitiv din sistem.
 
+   ---
+
 8. **Authentication Sequence Diagram** - Ioana Ghergu:
    ![Authentication Sequence Diagram](diagrams/Login%20and%20Sign%20up%20Sequence%20Diagram.png)
+
    ## Diagrama de secvență pentru procesul de autentificare în platformă
    ### Paricipanți
    - **Utilizator**: inițiază acțiuni în aplicație
@@ -222,10 +249,13 @@ ________________________________________________________________________________
       Atunci când detaliile sunt valide, sistemul de înregistrare generează un hash pentru parola introdusă pe baza funcției sha256, face o cerere către baza de date pentru inserare și redirecționează utilizatorul către pagina Home
       Atunci când credențialele sunt invalide, utilizatorul este redirecționat către pagina de Sign up și i se trimite mesajul de eroare.
 
+   ---
 
 9. **Deployment Diagram For Online Consultation** - Ioana Ghergu:
    ![Deployment Diagram For Online Consultation](diagrams/Deployment%20diagram%20video%20call.png)
+
    ## Diagrama de deployment pentru aplicația de videoconferință
+
    ### Noduri
    - **Client 1 Browser / Client 2 Browser**: în cadrul acestora rulează aplicația de apel video. Fiecare client are următoarele artefacte:
      - **Client Socket**: conexiune pentru comunicarea cu serverul de signaling
@@ -246,10 +276,12 @@ ________________________________________________________________________________
    - Ambii clienți schimbă candidații ICE prin server pentru a configura conexiunea peer-to-peer
    - **STUN Server** este utilizat ca dependință pentru conexiunea WebRTC a ambilor clienți. Acesta este necesar pentru generarea de ICE candidates, care sunt de fapt posibile rute prin clienții pot comunica
 
+   ---
+
 11. **Package Diagram** - Andrei Horceag:
    ![Package Diagram](diagrams/Package%20Diagram.jpg)
-## **Pachete Principale**
-   ---
+
+   ## **Pachete Principale**
    ### 1. **AI Diagnosis Prediction**
    - Utilizează modele AI pentru predicții medicale.
    - Interacționează cu `Utils` și `Database Server`.
@@ -273,21 +305,22 @@ ________________________________________________________________________________
    - Conectat prin ODBC Driver 17.
    ### 5. **Tests**
    - Scripturi de testare unitară pentru validarea funcționalităților.
+   
    ---
-
 
 13. **Deployment Diagram** - Andrei Horceag:
    ![Deployment Diagram](diagrams/Deployment%20Diagram.jpg)
+   
  # Prezentare Generală a Arhitecturii Sistemului
-   ---
+
    ### 1. **Server Client**
    - **Descriere:** Serverul client servește ca punct de intrare pentru utilizatori pentru a accesa aplicația web.
    - **Funcționalitate Principală:** Găzduiește interfața aplicației web, permițând interacțiunea utilizatorilor cu sistemul.
-   ---
+
    ### 2. **Load Balancer**
    - **Descriere:** Un Load Balancer este utilizat pentru a distribui uniform traficul între mai multe noduri ale aplicației.
    - **Scop:** Asigură o disponibilitate ridicată și previne supraîncărcarea unui singur nod.
-   ---
+   
    ### 3. **Nodurile de Aplicație**
    - **Descriere:** Nodurile (denumite `ApplicationServer1` până la `ApplicationServer4`) gestionează logica de business a aplicației. Aceste noduri funcționează independent pentru a asigura scalabilitatea și toleranța la erori.
    - **Module implementate în fiecare server de aplicație:**
@@ -296,13 +329,14 @@ ________________________________________________________________________________
    - **Integrare Videoconferință:** Permite consultații video în timp real.
    - **Diagnostice Generat de AI:** Utilizează inteligența artificială pentru a oferi diagnostice bazate pe datele introduse.
    - **Procesare Fișiere PDF Medicale:** Procesează documente medicale PDF pentru extragerea datelor structurate.
-   ---
+   
    ### 4. **Serverul de Bază de Date Azure**
    - **Descriere:** Bază de date centralizată găzduită pe Azure, servind drept depozit de date pentru întregul sistem.
    - **Scop:** Gestionează toate datele persistente, inclusiv:
    - Datele de autentificare și autorizare ale utilizatorilor.
    - Orarul consultațiilor și dosarele medicale.
    - Datele de diagnostic generate de modulul AI.
+   
    ---
 
 ## Instalare 🛠️
