@@ -192,11 +192,11 @@ ________________________________________________________________________________
    ![Authentication Sequence Diagram](diagrams/Login%20and%20Sign%20up%20Sequence%20Diagram.png)
    ## Diagrama de secvență pentru procesul de autentificare în platformă
    ### Paricipanți
-   - Utilizator: inițiază acțiuni în aplicație
-   - Sistem Log in: gestionează logica de autentificare
-   - Sistem Sign up: gestioneează logica de înregistrare 
-   - App Dashboard: interfața grafică a aplicației
-   - Database: baza de date asociată platformei
+   - **Utilizator**: inițiază acțiuni în aplicație
+   - **Sistem Log in**: gestionează logica de autentificare
+   - **Sistem Sign up**: gestionează logica de înregistrare 
+   - **App Dashboard**: interfața grafică a aplicației
+   - **Database**: baza de date asociată platformei
 
    La accesarea platformei, utilizatorul este direcționat către pagina de autentificare, unde își va introduce credențialele de logare. Acestea sunt preluate și trimise către backend-ul funcționalității de autentificare. Baza de date va fi activată pentru a rula un query bazat pe adresa de email introdusă, apoi va răspunde sistemului de autentificare cu rezultatul găsit.
 
@@ -204,8 +204,8 @@ ________________________________________________________________________________
       Operatorul `alt` ne permite să distingem două cazuri pe baza rezultatului trimis de către baza de date:
       - Utilizatorul este înregistrat, caz în care sistemul de autentificare va verifica validitatea parolei introduse pe baza hash-ului stocat în baza de date. Se vor distinge alte două cazuri:
          #### Verificarea corectitudinii parolei 
-            - Parola este corectă, utilizatorul este autentificat și trimis către pagina de Home, utilizatorul primește ca răspuns mesajul de succes
-            - Parola este greșită, caz în care utilizatorul este redirecționat către pagina de autentificare, care îi trimite ca răspuns la încercarea de conectare mesajul de eroare 
+        - Parola este corectă, utilizatorul este autentificat și trimis către pagina de Home, utilizatorul primește ca răspuns mesajul de succes
+         - Parola este greșită, caz în care utilizatorul este redirecționat către pagina de autentificare, care îi trimite ca răspuns la încercarea de conectare mesajul de eroare 
 
       - Utilizatorul nu este înregistrat, situație în care sistemul de autentificare face redirect către pagina de Log in, iar utilizatorului i se trimite ca răspuns mesajul corespunzător de eroare
 
@@ -223,11 +223,29 @@ ________________________________________________________________________________
    ![Deployment Diagram For Online Consultation](diagrams/Deployment%20diagram%20video%20call.png)
    ## Diagrama de deployment pentru aplicația de videoconferință
    ### Noduri
+   - **Client 1 Browser / Client 2 Browser**: în cadrul acestora rulează aplicația de apel video. Fiecare client are următoarele artefacte:
+     - **Client Socket**: conexiune pentru comunicarea cu serverul de signaling
+     - **Media Streams Fetching**: modul pentru accesarea fluxurilor media de la cameră și microfon
+     - **WebRTC Connection**: gestionează conexiunea peer-to-peer pentru transferul direct al fluxurilor media
+   
+   - **Signaling Server**: server pentru comunicarea între clienți. Conține următoarele artefacte:
+     - **Socket Endpoint**: gestionează conexiunile socket cu clienții.
+     - **SDP Offer/Answer Handling**: mecanism de procesare a ofertelor și răspunsurilor SDP pentru configurarea conexiunii WebRTC
+     - **ICE Candidates Exchange**: mecanism de partajare a candidaților ICE între clienți pentru stabilirea traseului optim al conexiunii
+   
+   - **STUN Server**: server utilizat pentru determinarea adreselor publice ale clienților și traversarea NAT-ului
 
-10. **Package Diagram** - Andrei Horceag:
+   ### Fluxul: Comunicarea este bidirecțională
+   - Client 1 inițiază un apel video. Browserul său accesează fluxurile media prin modulul **Media Streams Fetching**
+   - Oferta SDP este trimisă către serveru-ul de signaling prin intermediul socket-ului asociat clientului 1
+   - Serverul de semnalizare transferă oferta către Client 2, care trimite înapoi un răspuns SDP
+   - Ambii clienți schimbă candidații ICE prin server pentru a configura conexiunea peer-to-peer
+   - **STUN Server** este utilizat ca dependință pentru conexiunea WebRTC a ambilor clienți. Acesta este necesar pentru generarea de ICE candidates, care sunt de fapt posibile rute prin clienții pot comunica
+
+11. **Package Diagram** - Andrei Horceag:
    ![Package Diagram](diagrams/Package%20Diagram.jpg)
 
-11. **Deployment Diagram** - Andrei Horceag:
+12. **Deployment Diagram** - Andrei Horceag:
    ![Deployment Diagram](diagrams/Deployment%20Diagram.jpg)
 
 ## Instalare 🛠️
