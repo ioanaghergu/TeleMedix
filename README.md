@@ -56,7 +56,7 @@ Sistemul utilizează **Patternul Strategy** pentru gestionarea componentei de in
   - În caz contrar, se afișează un mesaj de eroare.
 ___________________________________________________________________________________________________________________________
 
-4. **Activity Diagram - Appointment Management** - Melania Ion:
+3. **Activity Diagram - Appointment Management** - Melania Ion:
    ![Activity Diagram - Appointment Management](diagrams/Activity%20Diagram%20Appointments%20Management.png)
    
 ## Diagrama de activitate pentru gestionarea consultațiilor
@@ -92,10 +92,7 @@ ________________________________________________________________________________
 ___________________________________________________________________________________________________________________________
 
 
-6. **Authentication Sequence Diagram** - Ioana Ghergu:
-   ![Authentication Sequence Diagram](diagrams/Login%20and%20Sign%20up%20Sequence%20Diagram.png)
-
-7. **Database Diagram** - Balc Larisa:
+4. **Database Diagram** - Balc Larisa:
    ![Database Diagram](diagrams/Diagrama%20baza%20de%20date.jpg)
 
    ## **Structura bazei de date**
@@ -142,7 +139,7 @@ ________________________________________________________________________________
    5. **Availability** → **Medic**: Intervalele orare disponibile ale medicilor.  
    6. **MedicalRecord** → **Patient**, **Medic**: Fișe medicale asociate cu pacienți și medici.  
 
-8. **Use Case Diagram** - Balc Larisa:
+5. **Use Case Diagram** - Balc Larisa:
    ![Use Case Diagram](diagrams/Diagrama%20UML%20UseCase.jpg)
 
    ## **Actori principali**  
@@ -173,12 +170,12 @@ ________________________________________________________________________________
 
    ---
 
-9. **Class Diagram** - Bianca Andrei:
+6. **Class Diagram** - Bianca Andrei:
    ![Class Diagram](diagrams/Diagrama%20clase.jpg)
 
    Diagrama de clase ilustrează structura unui sistem de gestionare a consultațiilor medicale, având clasa **User**, moștenită de **Doctor** și **Patient**. User definește atribute generale (de exemplu username, email) și metode comune (login(), edit_account()), în timp ce Doctor include funcții specifice precum set_availability(). Pacienții pot crea programări prin metoda add_consultation() și își pot gestiona fișele medicale. Clasa **Appointment** stochează detalii legate de consultații, precum data și intervalul, medicul și observațiile, iar doctorii sunt asociați cu specializările și disponibilitățile lor (Availability). Modelul evidențiază clar relațiile dintre utilizatori, programări și componentele esențiale ale sistemului.
 
-10. **Consultation State Diagram** - Bianca Andrei:
+7. **Consultation State Diagram** - Bianca Andrei:
    ![Consultation State Diagram](diagrams/Diagrama%20stari%20consultatie.jpg)
 
    Diagrama de stări descrie ciclul de viață al unei consultații medicale în cadrul unui sistem de gestionare a programărilor. Procesul începe în starea inițială **Idle**, unde utilizatorul poate iniția diverse acțiuni. Consultația poate trece prin mai multe stări:
@@ -192,6 +189,60 @@ ________________________________________________________________________________
       - **Sending notification** - Starea de trimitere a notificărilor are loc pentru acțiuni precum crearea sau anularea consultației, dar și pentru a le reaminti utilizatorilor de programare cu o oră înainte de consultație.
       
       - **Deleting appointment** - O programare deja anulată sau marcată ca fiind finalizată poate fi ștearsă definitiv din sistem.
+
+8. **Authentication Sequence Diagram** - Ioana Ghergu:
+   ![Authentication Sequence Diagram](diagrams/Login%20and%20Sign%20up%20Sequence%20Diagram.png)
+   ## Diagrama de secvență pentru procesul de autentificare în platformă
+   ### Paricipanți
+   - **Utilizator**: inițiază acțiuni în aplicație
+   - **Sistem Log in**: gestionează logica de autentificare
+   - **Sistem Sign up**: gestionează logica de înregistrare 
+   - **App Dashboard**: interfața grafică a aplicației
+   - **Database**: baza de date asociată platformei
+
+   La accesarea platformei, utilizatorul este direcționat către pagina de autentificare, unde își va introduce credențialele de logare. Acestea sunt preluate și trimise către backend-ul funcționalității de autentificare. Baza de date va fi activată pentru a rula un query bazat pe adresa de email introdusă, apoi va răspunde sistemului de autentificare cu rezultatul găsit.
+
+   ### Verificarea existenței utilizatorului în baza de date
+      Operatorul `alt` ne permite să distingem două cazuri pe baza rezultatului trimis de către baza de date:
+      - Utilizatorul este înregistrat, caz în care sistemul de autentificare va verifica validitatea parolei introduse pe baza hash-ului stocat în baza de date. Se vor distinge alte două cazuri:
+         #### Verificarea corectitudinii parolei 
+        - Parola este corectă, utilizatorul este autentificat și trimis către pagina de Home, utilizatorul primește ca răspuns mesajul de succes
+         - Parola este greșită, caz în care utilizatorul este redirecționat către pagina de autentificare, care îi trimite ca răspuns la încercarea de conectare mesajul de eroare 
+
+      - Utilizatorul nu este înregistrat, situație în care sistemul de autentificare face redirect către pagina de Log in, iar utilizatorului i se trimite ca răspuns mesajul corespunzător de eroare
+
+   În urma primirii mesajului de eroare "User doesn't exist", utilizatorul poate accesa pagina de înregistrare. Sistemul de Sign up va trmite o cerere către utilizator prin afișarea formularului de înregistrare, iar utilizatorul va răspunde cu datele sale. Sistemul de înregistrare va face o cerere SQL către baza de date, iar aceasta se va activa pentru a trimite rezultatul cerut. 
+   Utilizatorul va fi înregistrat în platformă pe baza situațiilor decizionale, distinse prin utilizarea operatorului `alt`.
+
+   ### Verificarea validității credențialelor pentru înregistrare
+      - Email existent în baza de date: utilizatorul este redirecționat către pagina de Sign up și primește ca răspuns pentru încercarea de a se înregistra mesajul de eroare corespunzător
+      - Email valid, ceea ce înseamnă că utilizatorul se poate înregistra. Sistemul de înregistrare validează credențialele introduse, apoi analizează următoarele situații: detaliile sunt valide, detaliile sunt invalide.
+      Atunci când detaliile sunt valide, sistemul de înregistrare generează un hash pentru parola introdusă pe baza funcției sha256, face o cerere către baza de date pentru inserare și redirecționează utilizatorul către pagina Home
+      Atunci când credențialele sunt invalide, utilizatorul este redirecționat către pagina de Sign up și i se trimite mesajul de eroare.
+
+
+9. **Deployment Diagram For Online Consultation** - Ioana Ghergu:
+   ![Deployment Diagram For Online Consultation](diagrams/Deployment%20diagram%20video%20call.png)
+   ## Diagrama de deployment pentru aplicația de videoconferință
+   ### Noduri
+   - **Client 1 Browser / Client 2 Browser**: în cadrul acestora rulează aplicația de apel video. Fiecare client are următoarele artefacte:
+     - **Client Socket**: conexiune pentru comunicarea cu serverul de signaling
+     - **Media Streams Fetching**: modul pentru accesarea fluxurilor media de la cameră și microfon
+     - **WebRTC Connection**: gestionează conexiunea peer-to-peer pentru transferul direct al fluxurilor media
+   
+   - **Signaling Server**: server pentru comunicarea între clienți. Conține următoarele artefacte:
+     - **Socket Endpoint**: gestionează conexiunile socket cu clienții.
+     - **SDP Offer/Answer Handling**: mecanism de procesare a ofertelor și răspunsurilor SDP pentru configurarea conexiunii WebRTC
+     - **ICE Candidates Exchange**: mecanism de partajare a candidaților ICE între clienți pentru stabilirea traseului optim al conexiunii
+   
+   - **STUN Server**: server utilizat pentru determinarea adreselor publice ale clienților și traversarea NAT-ului
+
+   ### Fluxul: Comunicarea este bidirecțională
+   - Client 1 inițiază un apel video. Browserul său accesează fluxurile media prin modulul **Media Streams Fetching**
+   - Oferta SDP este trimisă către serveru-ul de signaling prin intermediul socket-ului asociat clientului 1
+   - Serverul de semnalizare transferă oferta către Client 2, care trimite înapoi un răspuns SDP
+   - Ambii clienți schimbă candidații ICE prin server pentru a configura conexiunea peer-to-peer
+   - **STUN Server** este utilizat ca dependință pentru conexiunea WebRTC a ambilor clienți. Acesta este necesar pentru generarea de ICE candidates, care sunt de fapt posibile rute prin clienții pot comunica
 
 11. **Package Diagram** - Andrei Horceag:
    ![Package Diagram](diagrams/Package%20Diagram.jpg)
