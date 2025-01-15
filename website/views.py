@@ -28,6 +28,11 @@ def appointments():
 def diagnosis():
     return render_template("diagnosis.html")
 
+@views.route('/consultation_summary')
+@login_required
+def consultation_summary():
+    return render_template('doctors/consultation_summary.html')
+
 @views.route('/doctors')
 @login_required
 def doctors_list():
