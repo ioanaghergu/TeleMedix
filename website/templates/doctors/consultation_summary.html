@@ -1,0 +1,61 @@
+{% extends "_baseTemplate.html" %}
+
+{% block title %}Consultation Summary{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1>Consultation Summary</h1>
+  <p>Fill out the details below to record a consultation.</p>
+
+  <form action="{{ url_for('doctor.insert_consultation_summary') }}" method="post">
+
+    <div class="form-group">
+      <label for="patient">Patient</label>
+      <select class="form-control" id="patient" name="patient_id" required>
+        <option value="" disabled selected>Select a patient</option>
+        {% for patient in patients %}
+          <option value="{{ patient.id }}">{{ patient.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group mt-3">
+      <label for="symptoms">Symptoms</label>
+      <input 
+        type="text" 
+        class="form-control" 
+        id="symptoms" 
+        name="symptoms" 
+        placeholder="Enter symptoms"
+        required 
+      />
+    </div>
+
+    <div class="form-group mt-3">
+      <label for="diagnosis">Diagnosis</label>
+      <input 
+        type="text" 
+        class="form-control" 
+        id="diagnosis" 
+        name="diagnosis" 
+        placeholder="Enter diagnosis"
+        required 
+      />
+    </div>
+
+    <div class="form-group mt-3">
+      <label for="treatment">Treatment</label>
+      <input 
+        type="text" 
+        class="form-control" 
+        id="treatment" 
+        name="treatment" 
+        placeholder="Enter treatment"
+        required 
+      />
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Submit</button>
+  </form>
+</div>
+{% endblock %}

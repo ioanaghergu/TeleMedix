@@ -166,3 +166,57 @@ def get_slots():
     print(doctorid, date)
     slots = cursor.execute('SELECT [availabilityID], [start_time], [end_time] FROM [Availability] WHERE [medicID] = ? AND [date] = ? AND [availability_status] = \'FREE\'', doctorid, date).fetchall()
     return jsonify(slots=[{'start_time': slot.start_time, 'end_time': slot.end_time, 'availability_id': slot.availabilityID} for slot in slots])
+
+@doctor.route('/consultation-summary', methods=['GET'])
+@login_required
+def consultation_summary():
+    conn = current_app.db
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT u.userID AS id, u.username AS name
+        FROM [User] u
+        INNER JOIN [Pacient] p ON u.userID = p.pacientID
+    """)
+    patients = cursor.fetchall()
+
+    return render_template('doctors/consultation_summary.html', patients=patients)
+
+@doctor.route('/insert-consultation-summary', methods=['POST'])
+@login_required
+def insert_consultation_summary():
+    symptoms = request.form.get('symptoms')
+    diagnosis = request.form.get('diagnosis')
+    treatment = request.form.get('treatment')
+    patient_id = request.form.get('patient_id')
+
+    if not symptoms or not diagnosis or not treatment or not patient_id:
+        flash("All fields are required!", "error")
+        return redirect(url_for('doctor.consultation_summary'))  # Adjust route name as needed
+
+    conn = current_app.db
+    cursor = conn.cursor()
+
+    # Fetch the last recordID for the inserted patient
+    cursor.execute("""
+        SELECT recordID
+        FROM [MedicalRecord]
+        WHERE pacientID = ?
+    """, (patient_id,))
+    record_id_row = cursor.fetchone()
+
+    if not record_id_row or record_id_row[0] is None:
+        raise ValueError("Failed to retrieve the new recordID.")
+
+    record_id = int(record_id_row[0])
+
+    # Insert into Diagnosis table
+    cursor.execute("""
+        INSERT INTO [Diagnosis] (recordID, medicID, treatment, diagnosis, symptoms)
+        VALUES (?, ?, ?, ?, ?)
+    """, (record_id, current_user.userid, treatment, diagnosis, symptoms))
+
+    conn.commit()
+    flash("Consultation summary and medical record added successfully!", "success")
+
+    return redirect(url_for('doctor.consultation_summary'))

@@ -38,10 +38,15 @@
           {% if current_user.is_authenticated %}
             <a class="nav-item nav-link" id="home" href="/">Home</a>
             <a class="nav-item nav-link" id="account" href="{{ url_for('views.account') }}">My Account</a>
+            {% if current_user.roleid == 2 %}
             <a class="nav-item nav-link" id="diagnosis" href="/diagnosis">Generate diagnosis</a>
+            {% endif %}
             <a class="nav-item nav-link" id="appointments" href="{{ url_for('consultation.get_consultations') }}">Manage Appointments</a>
             {% if current_user.roleid == 3 %}
               <a class="nav-item nav-link" id="availabilitySlots" href="{{ url_for('doctor.get_availability_list') }}">Availability</a>
+            {% endif %}
+            {% if current_user.roleid == 3 %}
+              <a class="nav-item nav-link" id="consultationSummary" href="{{ url_for('doctor.consultation_summary') }}">Consultation Summary</a>
             {% endif %}
             <a class="nav-item nav-link" id="logout" href="/logout">Logout</a>
         </div>
