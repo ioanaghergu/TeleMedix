@@ -52,6 +52,7 @@
                     <th scope="col">Appointment</th>
                     {% if current_user.roleid == 3 %}
                         <th scope="col" class="text-center">Medical File</th>
+                        <th scope="col" class="text-center">Diagnosis</th>
                     {% endif %}
                 </tr>
             </thead>
@@ -143,6 +144,14 @@
                     <td>
                         <form method="GET" action="{{ url_for('consultation.view_medical_file', pacient_id=appointment['pacientID']) }}" class="mb-2 d-flex align-items-center justify-content-center">
                             <button type="submit" class="btn btn-info btn-sm ">View</button>
+                        </form>
+                    </td>
+                    {% endif %}
+
+                    {% if appointment.status == 'Attended'%}
+                    <td>
+                        <form method="GET" action="{{ url_for('doctor.consultation_summary', pacient_id=appointment['pacientID']) }}" class="mb-2 d-flex align-items-center justify-content-center">
+                            <button type="submit" class="btn btn-info btn-sm ">Diagnose</button>
                         </form>
                     </td>
                     {% endif %}
