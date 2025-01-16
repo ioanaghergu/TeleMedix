@@ -167,30 +167,26 @@ def get_slots():
     slots = cursor.execute('SELECT [availabilityID], [start_time], [end_time] FROM [Availability] WHERE [medicID] = ? AND [date] = ? AND [availability_status] = \'FREE\'', doctorid, date).fetchall()
     return jsonify(slots=[{'start_time': slot.start_time, 'end_time': slot.end_time, 'availability_id': slot.availabilityID} for slot in slots])
 
-@doctor.route('/consultation-summary', methods=['GET'])
+@doctor.route('/consultation-summary/<int:pacient_id>', methods=['GET'])
 @login_required
-def consultation_summary():
+def consultation_summary(pacient_id):
     conn = current_app.db
     cursor = conn.cursor()
 
-    cursor.execute("""
-        SELECT u.userID AS id, u.username AS name
-        FROM [User] u
-        INNER JOIN [Pacient] p ON u.userID = p.pacientID
-    """)
-    patients = cursor.fetchall()
+    pacient = cursor.execute(
+        "SELECT * FROM [Pacient] WHERE [pacientID] = ?", 
+        (pacient_id)).fetchone()
 
-    return render_template('doctors/consultation_summary.html', patients=patients)
+    return render_template('doctors/consultation_summary.html', patient=pacient)
 
-@doctor.route('/insert-consultation-summary', methods=['POST'])
+@doctor.route('/insert-consultation-summary/<int:pacient_id>', methods=['POST'])
 @login_required
-def insert_consultation_summary():
+def insert_consultation_summary(pacient_id):
     symptoms = request.form.get('symptoms')
     diagnosis = request.form.get('diagnosis')
     treatment = request.form.get('treatment')
-    patient_id = request.form.get('patient_id')
 
-    if not symptoms or not diagnosis or not treatment or not patient_id:
+    if not symptoms or not diagnosis or not treatment or not pacient_id:
         flash("All fields are required!", "error")
         return redirect(url_for('doctor.consultation_summary'))  # Adjust route name as needed
 
@@ -202,7 +198,7 @@ def insert_consultation_summary():
         SELECT recordID
         FROM [MedicalRecord]
         WHERE pacientID = ?
-    """, (patient_id,))
+    """, (pacient_id,))
     record_id_row = cursor.fetchone()
 
     if not record_id_row or record_id_row[0] is None:
@@ -219,4 +215,5 @@ def insert_consultation_summary():
     conn.commit()
     flash("Consultation summary and medical record added successfully!", "success")
 
-    return redirect(url_for('doctor.consultation_summary'))
+    return redirect(url_for('doctor.consultation_summary', pacient_id=pacient_id))
+
