@@ -148,7 +148,7 @@
                     </td>
                     {% endif %}
 
-                    {% if appointment.status == 'Attended'%}
+                    {% if current_user.roleid == 3 and appointment.status == 'Attended'%}
                     <td>
                         <form method="GET" action="{{ url_for('doctor.consultation_summary', pacient_id=appointment['pacientID']) }}" class="mb-2 d-flex align-items-center justify-content-center">
                             <button type="submit" class="btn btn-info btn-sm ">Diagnose</button>
